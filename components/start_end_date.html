@@ -1,0 +1,95 @@
+{{ define "start_end_date" }}
+{{ $uniq := uniq }}
+{{ $containerid := uniq }}
+<div id="{{$containerid}}" class="w-full flex flex-col md:grid grid-cols-3 gap-2">
+  {{ if .Label }}
+  <div class="mx-auto sm:mx-0 font-gray-700 flex flex-col justify-center">
+    {{ .Label }}
+  </div>
+  {{ end }}
+  <div class="flex gap-1 w-full md:w-fit justify-between">
+    <button
+        data-period-prev="{{$uniq}}"
+        type="button"
+        class="sm:hidden rounded-r-md w-full max-w-[4rem] min-w-6 h-12 pl-1 border border-transparent shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        title="Previous Period">
+      {{ heroIcon "outline/chevron-left" }}
+    </button>
+    <div class="">
+      <label for="{{$uniq}}-filter-start" class="sr-only block text-sm font-medium text-gray-700">From</label>
+      <input id="{{$uniq}}-filter-start" class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" autocomplete="off" type="date" name="{{.Prefix}}start" value="{{.Period.Start.Format "2006-01-02"}}">
+    </div>
+    <div class="">
+      <label for="{{$uniq}}-filter-end" class="sr-only block text-sm font-medium text-gray-700">To</label>
+      <input id="{{$uniq}}-filter-end" class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" autocomplete="off" type="date" name="{{.Prefix}}end" value="{{.Period.End.Format "2006-01-02"}}">
+    </div>
+    <button
+        data-period-next="{{$uniq}}"
+        type="button"
+        class="sm:hidden rounded-l-md w-full max-w-[4rem] min-w-6 h-12 pr-1 border border-transparent shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        title="Next Period">
+      <span class="float-right">
+      {{ heroIcon "outline/chevron-right" }}
+      </span>
+    </button>
+    <div class="hidden sm:flex pl-4 divide divide-gray-700 divide-x-2">
+      <button
+          data-period-prev="{{$uniq}}"
+          type="button"
+          class="rounded-l-md w-12 h-12 pl-3 border border-transparent shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          title="Previous Period">
+        {{ heroIcon "outline/chevron-left" }}
+      </button>
+      <button
+          data-period-next="{{$uniq}}"
+          type="button"
+          class="rounded-r-md w-12 h-12 pl-3 border border-transparent shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          title="Next Period">
+        {{ heroIcon "outline/chevron-right" }}
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  (function(){
+    const container = document.getElementById('{{$containerid}}');
+
+    const start = document.getElementById('{{$uniq}}-filter-start');
+    const end = document.getElementById('{{$uniq}}-filter-end');
+
+    const prevPeriod = function(s, e) {
+      const st = luxon.DateTime.fromISO(s);
+      const en = luxon.DateTime.fromISO(e);
+      const diff = en.diff(st, 'days');
+      return {start: st.minus(diff), end: en.minus(diff) }
+    }
+
+    const nextPeriod = function(s, e) {
+      const st = luxon.DateTime.fromISO(s);
+      const en = luxon.DateTime.fromISO(e);
+      const diff = en.diff(st, 'days');
+      return {start: st.plus(diff), end: en.plus(diff) }
+    }
+
+    const prevButtons = document.querySelectorAll('*[data-period-prev="{{$uniq}}"]')
+    Array.prototype.filter.call(prevButtons, function(el) {
+      el.addEventListener('click', function() {
+        const period = prevPeriod(start.value, end.value);
+        start.value = period.start.toISODate();
+        end.value = period.end.toISODate();
+        start.form.dispatchEvent(new CustomEvent('change'));
+      });
+    });
+
+    const nextButtons = document.querySelectorAll('*[data-period-next="{{$uniq}}"]')
+    Array.prototype.filter.call(nextButtons, function(el) {
+      el.addEventListener('click', function() {
+        const period = nextPeriod(start.value, end.value);
+        start.value = period.start.toISODate();
+        end.value = period.end.toISODate();
+        start.form.dispatchEvent(new CustomEvent('change'));
+      });
+    });
+  })()
+</script>
+{{ end }}

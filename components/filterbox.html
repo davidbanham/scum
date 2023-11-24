@@ -1,0 +1,89 @@
+{{ define "filterbox" }}
+{{ $toggleID := uniq }}
+{{ $selectID := uniq }}
+{{ $formID := uniq }}
+
+{{ $filtered := (len .Entity.Criteria.Filters) }}
+
+{{ if .Entity.AvailableFilters }}
+<div class="w-full flex flex-row-reverse gap-2 px-2 sm:px-0 sm:mb-0 -mt-2 sm:mt-0">
+  {{ if not $filtered }}
+  <div class="sm:hidden -mb-12" id="{{$toggleID}}">
+    {{ template "heroicons/outline/queue-list" dict "Class" "h-5 w-5" }}
+  </div>
+  {{ end }}
+  <form id="{{$formID}}" class="{{if not $filtered}}hidden{{end}} w-full text-sm sm:flex md:ml-0" action="#" method="GET">
+    <label for="filter_field" class="sr-only">Filter</label>
+    <div class="relative w-full text-gray-400 focus-within:text-gray-600 flex flex-col gap-2 choices-picker">
+      <div class="w-full">
+        <select autocomplete="off" id="{{$selectID}}" autocomplete="off" name="filter" multiple>
+          <option value="">Apply Filters</option>
+          {{ range .Entity.Criteria.Filters }}
+          <option value="{{.ID}}" selected>{{.Label}}</option>
+          {{ end }}
+
+          {{ range .Entity.AvailableFilters }}
+          {{ if not (index $.Entity.Criteria.Filters.ByID .ID)}}
+          <option value="{{.ID}}">{{.Label}}</option>
+          {{ end }}
+          {{ end }}
+        </select>
+      </div>
+      {{ range $.Entity.Criteria.Filters }}
+      {{ $filter := . }}
+      {{ range .Inputs }}
+      {{ if eq . "start_end_date" }}
+      <div class="-mx-2 sm:px-5" data-parentfilter="{{$filter.ID}}">
+        {{ template "start_end_date" dict "Period" $filter.Period "Prefix" (print $filter.ID "-") "Label" $filter.Label }}
+      </div>
+      {{ end }}
+      {{ end }}
+      {{ end }}
+    </div>
+    <script>
+      (function() {
+        const instance = new Choices(document.getElementById('{{$selectID}}'), {});
+        const form = document.getElementById('{{$formID}}');
+
+        function debounce(func, timeout){
+          let timer;
+          if (!timeout) {
+            timeout = 300;
+          }
+          return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+          };
+        }
+
+        form.addEventListener('change', debounce(function(ev) {
+          const data = new FormData(form);
+          const selected = data.getAll('filter');
+          {{ range $.Entity.Criteria.Filters }}
+          {{ if .Inputs }}
+          if (!selected.includes("{{.ID}}")) {
+            const inputs = form.querySelectorAll('*[data-parentfilter="{{.ID}}"]');
+            Array.prototype.filter.call(inputs, function(el) {
+              el.remove()
+            });
+          }
+          {{ end }}
+          {{ end }}
+          form.requestSubmit();
+        }, 1000));
+      })();
+    </script>
+  </form>
+  {{ if not $filtered }}
+  <script>
+    (function() {
+      document.getElementById('{{$toggleID}}').addEventListener('click', function() {
+        document.getElementById('{{$formID}}').classList.toggle('hidden');
+      });
+    })();
+  </script>
+  {{ end }}
+</div>
+{{ end }}
+
+{{ end }}
