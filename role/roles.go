@@ -8,6 +8,14 @@ import (
 
 type Roles []Role
 
+func (roles Roles) ByName() map[string]Role {
+	ret := map[string]Role{}
+	for _, r := range roles {
+		ret[r.Name] = r
+	}
+	return ret
+}
+
 func (roles Roles) Value() (driver.Value, error) {
 	return json.Marshal(roles)
 }
@@ -31,17 +39,18 @@ func (roles Roles) Can(name string) bool {
 }
 
 type Role struct {
-	Name       string
-	Label      string
-	Implies    Roles
-	ValidRoles map[string]*Role
+	Name       string `json:"name"`
+	Label      string `json:"label"`
+	Implies    Roles  `json:"-"`
+	ValidRoles Roles  `json:"-"`
 }
 
 func (this *Role) Can(role string) bool {
 	if role == this.Name {
 		return true
 	}
-	this.Implies = this.ValidRoles[this.Name].Implies
+	validMap := this.ValidRoles.ByName()
+	this.Implies = validMap[this.Name].Implies
 	for _, sub := range this.Implies {
 		if sub.Can(role) {
 			return true
@@ -52,12 +61,12 @@ func (this *Role) Can(role string) bool {
 
 func (this Role) Implications() []string {
 	ret := []string{}
-	for name, _ := range this.ValidRoles {
-		if name == this.Name {
+	for _, r := range this.ValidRoles {
+		if r.Name == this.Name {
 			continue
 		}
-		if this.Can(name) {
-			ret = append(ret, name)
+		if this.Can(r.Name) {
+			ret = append(ret, r.Name)
 		}
 	}
 	return ret
