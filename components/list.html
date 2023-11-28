@@ -9,8 +9,8 @@
 </div>
 {{ end }}
 <ul class="text-sm divide-y divide-gray-200">
-  {{ block "list-empty" . }}
   {{ if eq (len .Entity.Data) 0 }}
+  {{ block "list-empty" . }}
   {{ template "list-item" dict "URI" (print "/" $.Entity.Searchable.Path "/create") "Label" "There's nothing here!" }}
   {{ end }}
   {{ end }}
