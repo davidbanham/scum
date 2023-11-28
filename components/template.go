@@ -70,14 +70,16 @@ var FuncMap = template.FuncMap{
 			})
 		}
 		path := ""
-		for _, crumb := range crumbs {
+		for i, crumb := range crumbs {
 			if crumb.Path != "" && crumb.Path != "#" {
 				if path == "" {
+					path = crumb.Path
+				} else if crumb.Path[0] == '/' {
 					path = crumb.Path
 				} else {
 					path = fmt.Sprintf("%s/%s", path, crumb.Path)
 				}
-				crumb.Path = path
+				crumbs[i].Path = path
 			}
 		}
 		return crumbs, nil
