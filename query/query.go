@@ -17,7 +17,7 @@ type Query interface {
 type All struct{}
 
 func (All) Construct(columns []string, table string, filters filter.Filters, pagination pagination.Pagination, order string) string {
-	return fmt.Sprintf(`SELECT %s FROM %s %s ORDER BY %s %s`, strings.Join(columns, ","), table, filters.Query(), order, pagination.PaginationQuery())
+	return fmt.Sprintf(`SELECT %s FROM %s %s ORDER BY %s %s`, strings.Join(columns, ", "), table, filters.Query(), order, pagination.PaginationQuery())
 }
 func (All) Args() []any {
 	return []any{}
@@ -28,7 +28,7 @@ type ByOrg struct {
 }
 
 func (this ByOrg) Construct(columns []string, table string, filters filter.Filters, pagination pagination.Pagination, order string) string {
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND organisation_id = $1 ORDER BY %s %s`, strings.Join(columns, ","), table, filters.Query(), order, pagination.PaginationQuery())
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND organisation_id = $1 ORDER BY %s %s`, strings.Join(columns, ", "), table, filters.Query(), order, pagination.PaginationQuery())
 }
 func (this ByOrg) Args() []any {
 	return []any{this.ID}
@@ -39,7 +39,7 @@ type ByUser struct {
 }
 
 func (this ByUser) Construct(columns []string, table string, filters filter.Filters, pagination pagination.Pagination, order string) string {
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND user_id = $1 ORDER BY %s %s`, strings.Join(columns, ","), table, filters.Query(), order, pagination.PaginationQuery())
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND user_id = $1 ORDER BY %s %s`, strings.Join(columns, ", "), table, filters.Query(), order, pagination.PaginationQuery())
 }
 func (this ByUser) Args() []any {
 	return []any{this.ID}
@@ -50,7 +50,7 @@ type ByIDs struct {
 }
 
 func (this ByIDs) Construct(columns []string, table string, filters filter.Filters, pagination pagination.Pagination, order string) string {
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND id = ANY($1) ORDER BY %s %s`, strings.Join(columns, ","), table, filters.Query(), order, pagination.PaginationQuery())
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND id = ANY($1) ORDER BY %s %s`, strings.Join(columns, ", "), table, filters.Query(), order, pagination.PaginationQuery())
 }
 func (this ByIDs) Args() []any {
 	return []any{pq.Array(this.IDs)}
@@ -61,7 +61,7 @@ type ByEntityID struct {
 }
 
 func (this ByEntityID) Construct(columns []string, table string, filters filter.Filters, pagination pagination.Pagination, order string) string {
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND entity_id = ($1) ORDER BY %s %s`, strings.Join(columns, ","), table, filters.Query(), order, pagination.PaginationQuery())
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND entity_id = ($1) ORDER BY %s %s`, strings.Join(columns, ", "), table, filters.Query(), order, pagination.PaginationQuery())
 }
 func (this ByEntityID) Args() []any {
 	return []any{this.EntityID}
