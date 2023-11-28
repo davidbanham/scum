@@ -11,7 +11,7 @@ import (
 
 type Filter interface {
 	Label() string
-	Query() string
+	Query(int) (string, []any)
 	ID() string
 	Populate(url.Values) error
 	Inputs() []string
@@ -71,10 +71,10 @@ type dateBase struct {
 	period   util.Period
 }
 
-func (this dateBase) Query() string {
+func (this dateBase) Query(propIndex int) (string, []any) {
 	start := strings.Replace(this.period.Start.Format(time.RFC3339), "T", " ", 1)
 	end := strings.Replace(this.period.End.Format(time.RFC3339), "T", " ", 1)
-	return fmt.Sprintf("%s.%s BETWEEN '%s' AND '%s'", this.table, this.col, start, end)
+	return fmt.Sprintf("%s.%s BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{start, end}
 }
 
 func (this dateBase) Inputs() []string {
@@ -130,15 +130,19 @@ func (filters Filters) ByID() map[string]Filter {
 	return ret
 }
 
-func (filters Filters) Query() string {
+func (filters Filters) Query(propIndex int) (string, []any) {
 	if len(filters) == 0 {
-		return " WHERE true = true "
+		return " WHERE true = true ", []any{}
 	}
 	fragments := []string{}
+	props := []any{}
 	for _, filter := range filters {
-		fragments = append(fragments, filter.Query())
+		q, p := filter.Query(propIndex)
+		propIndex += len(p)
+		fragments = append(fragments, q)
+		props = append(props, p...)
 	}
-	return " WHERE " + strings.Join(fragments, " AND ")
+	return " WHERE " + strings.Join(fragments, " AND "), props
 }
 
 func (filters *Filters) FromForm(form url.Values, availableFilters Filters, customFilters ...Filter) error {
@@ -171,8 +175,8 @@ type HasProp struct {
 	value string
 }
 
-func (this HasProp) Query() string {
-	return fmt.Sprintf("%s.%s = '%s'", this.table, this.col, this.value)
+func (this HasProp) Query(propIndex int) (string, []any) {
+	return fmt.Sprintf("%s.%s = $%d", this.table, this.col, propIndex), []any{this.value}
 }
 
 type HasPropOpts struct {
@@ -205,12 +209,22 @@ type Custom struct {
 	CustomLabel string
 }
 
-func (this Custom) Query() string {
-	vals := []string{}
-	for _, val := range this.Values {
-		vals = append(vals, fmt.Sprintf("'%s'", val))
+func (this Custom) Query(propIndex int) (string, []any) {
+	if len(this.Values) == 0 {
+		return "true = true", []any{}
 	}
-	return fmt.Sprintf("%s::text = ANY (ARRAY[%s])", this.Col, strings.Join(vals, ", "))
+	props := []any{}
+	placeholders := []string{}
+	for i, val := range this.Values {
+		props = append(props, val)
+		placeholders = append(placeholders, fmt.Sprintf("$%d", propIndex+i))
+	}
+	return fmt.Sprintf("%s::text = ANY (ARRAY[%s])", this.Col, strings.Join(placeholders, ", ")), props
+}
+
+func (this *Custom) Populate(form url.Values) error {
+	this.Values = form[this.CustomID]
+	return nil
 }
 
 func (this Custom) Label() string {
@@ -229,16 +243,20 @@ type FilterSet struct {
 	IsAnd       bool
 }
 
-func (this FilterSet) Query() string {
+func (this FilterSet) Query(propIndex int) (string, []any) {
 	queries := []string{}
+	props := []any{}
 	for _, filter := range this.Filters {
-		queries = append(queries, filter.Query())
+		q, p := filter.Query(propIndex)
+		propIndex += len(p)
+		queries = append(queries, q)
+		props = append(props, p...)
 	}
 	operator := " OR "
 	if this.IsAnd {
 		operator = " AND "
 	}
-	return fmt.Sprintf("(%s)", strings.Join(queries, operator))
+	return fmt.Sprintf("(%s)", strings.Join(queries, operator)), props
 }
 
 func (this FilterSet) Label() string {

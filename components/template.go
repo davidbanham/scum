@@ -77,7 +77,7 @@ var FuncMap = template.FuncMap{
 				} else if crumb.Path[0] == '/' {
 					path = crumb.Path
 				} else {
-					path = fmt.Sprintf("%s/%s", path, crumb.Path)
+					path = fmt.Sprintf("%s/%s", strings.Split(path, "?")[0], crumb.Path)
 				}
 				crumbs[i].Path = path
 			}

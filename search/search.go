@@ -102,16 +102,21 @@ type SearchResults struct {
 type ByPhrase struct {
 	OrganisationID string
 	Phrase         string
+	props          []any
 }
 
 func (this ByPhrase) Construct(entities Searchables, filters filter.Filters, pagination pagination.Pagination) string {
 	parts := []string{}
+
+	filterQuery, filterProps := filters.Query(3)
+	this.props = append(this.props, filterProps...)
+
 	for _, entity := range entities {
 		parts = append(parts, `
 SELECT
 	text '`+entity.EntityType+`' AS entity_type, text '`+entity.Path+`' AS uri_path, id AS id, `+entity.Label+` AS label, ts_rank_cd(ts, query) AS rank
 FROM
-`+entity.Tablename+`, plainto_tsquery('english', $2) query `+filters.Query()+` AND organisation_id = $1 AND query @@ ts`)
+`+entity.Tablename+`, plainto_tsquery('english', $2) query `+filterQuery+` AND organisation_id = $1 AND query @@ ts`)
 	}
 
 	query := strings.Join(parts, " UNION ALL ")
@@ -122,7 +127,7 @@ FROM
 }
 
 func (this ByPhrase) Args() []any {
-	return []any{this.OrganisationID, this.Phrase}
+	return append([]any{this.OrganisationID, this.Phrase}, this.props...)
 }
 
 func (this ByPhrase) UserInput() string {
