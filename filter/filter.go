@@ -148,7 +148,7 @@ func (filters Filters) Query(propIndex int) (string, []any) {
 func (filters *Filters) FromForm(form url.Values, availableFilters Filters, customFilters ...Filter) error {
 	activeFilters := Filters{}
 
-	availableFiltersByID := append(availableFilters, customFilters...).ByID()
+	availableFiltersByID := availableFilters.ByID()
 	for _, k := range form["filter"] {
 		f, ok := availableFiltersByID[k]
 		if ok {
@@ -235,12 +235,17 @@ func (this Custom) ID() string {
 	return this.CustomID
 }
 
+func (this Custom) Inputs() []string {
+	return []string{"hidden"}
+}
+
 type FilterSet struct {
 	filterBase
 	Filters     Filters
 	CustomID    string
 	CustomLabel string
 	IsAnd       bool
+	Values      []string
 }
 
 func (this FilterSet) Query(propIndex int) (string, []any) {
@@ -265,4 +270,8 @@ func (this FilterSet) Label() string {
 
 func (this FilterSet) ID() string {
 	return this.CustomID
+}
+
+func (this FilterSet) Inputs() []string {
+	return []string{"hidden"}
 }

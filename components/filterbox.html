@@ -36,6 +36,10 @@
       <div class="-mx-2 sm:px-5" data-parentfilter="{{$filter.ID}}">
         {{ template "start_end_date" dict "Period" $filter.Period "Prefix" (print $filter.ID "-") "Label" $filter.Label }}
       </div>
+      {{ else if eq . "hidden" }}
+      {{ range $filter.Values }}
+      <input type="hidden" data-parentfilter="{{$filter.ID}}" name="{{$filter.CustomID}}" value="{{.}}">
+      {{ end }}
       {{ end }}
       {{ end }}
       {{ end }}
