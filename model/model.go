@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"reflect"
 	"strings"
 	"time"
 
@@ -146,3 +147,13 @@ type Querier interface {
 }
 
 var ErrWrongRev = util.ClientSafeError{Message: "This record has been changed by another request since you loaded it. Review the changes by going back and refreshing, and try again if appropriate."}
+
+type ErrInvalidQuery struct {
+	Query interface{}
+	Model string
+}
+
+func (this ErrInvalidQuery) Error() string {
+	t := reflect.TypeOf(this.Query)
+	return fmt.Sprintf("Invalid query. %s is not handled for %s", t.Name(), this.Model)
+}
