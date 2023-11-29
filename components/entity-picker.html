@@ -4,7 +4,13 @@
 <label for="{{$uniqID}}" class="block text-sm font-medium text-gray-700">{{.Title}}</label>
 <div class="flex mt-1 text-sm text-gray-900">
   <div class="w-full">
-    <select autocomplete="off" id="{{$uniqID}}" name="{{.Name}}" {{ if .Multiple }}multiple{{ end }}>
+    <select
+       class="choices-picker w-full text-md font-medium text-gray-900 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+       autocomplete="off"
+       id="{{$uniqID}}"
+       name="{{.Name}}"
+       {{ if .Multiple }}multiple{{ end }}
+       >
       <option
           value=""
           >Select {{.Title}}</option>
@@ -21,13 +27,15 @@
     </select>
   </div>
 
+  {{ if .IncludeSubmit }}
   <button type="submit" class="max-h-12 grow-0 mt-0 ml-2 inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
     {{ heroIcon "outline/check-circle" }}
   </button>
+  {{ end }}
 </div>
 <script>
   (function(){
-    const elem = document.getElementsById('{{$uniqID}}');
+    const elem = document.getElementById('{{$uniqID}}');
     new Choices(elem, {});
   })()
 </script>
