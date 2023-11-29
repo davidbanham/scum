@@ -1,7 +1,7 @@
 {{ define "entitypicker" }}
 {{ $uniqID := uniq }}
 {{ $selectedMap := .SelectedElems.ByID }}
-<label for="{{$uniqID}}" class="block text-sm font-medium text-gray-700">{{.Title}}</label>
+<label for="{{$uniqID}}" class="block text-sm font-medium text-gray-700 {{if .HideLabel}}sr-only{{end}}">{{.Title}}</label>
 <div class="flex mt-1 text-sm text-gray-900">
   <div class="w-full">
     <select
@@ -37,6 +37,23 @@
   (function(){
     const elem = document.getElementById('{{$uniqID}}');
     new Choices(elem, {});
+
+    {{ if .AutoSubmit }}
+    function debounce(func, timeout){
+      let timer;
+      if (!timeout) {
+        timeout = 300;
+      }
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+      };
+    }
+
+    elem.addEventListener('change', debounce(function(ev) {
+      elem.form.requestSubmit();
+    }, 1000));
+    {{ end }}
   })()
 </script>
 {{ end }}
