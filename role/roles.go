@@ -38,36 +38,33 @@ func (roles Roles) Can(name string) bool {
 	return false
 }
 
+//func (roles Roles) CanOver(name string, entityID string) bool {
+//	for _, role := range roles {
+//		for _, sub := range role.Over {
+//			if sub == entityID {
+//				return role.Can(name)
+//			}
+//		}
+//	}
+//	return false
+//}
+
 type Role struct {
-	Name       string `json:"name"`
-	Label      string `json:"label"`
-	Implies    Roles  `json:"-"`
-	ValidRoles Roles  `json:"-"`
+	Name    string `json:"name"`
+	Label   string `json:"label"`
+	Implies Roles  `json:"-"`
+
+	//Over       []string `json:"over"`
 }
 
 func (this *Role) Can(role string) bool {
 	if role == this.Name {
 		return true
 	}
-	validMap := this.ValidRoles.ByName()
-	this.Implies = validMap[this.Name].Implies
 	for _, sub := range this.Implies {
 		if sub.Can(role) {
 			return true
 		}
 	}
 	return false
-}
-
-func (this Role) Implications() []string {
-	ret := []string{}
-	for _, r := range this.ValidRoles {
-		if r.Name == this.Name {
-			continue
-		}
-		if this.Can(r.Name) {
-			ret = append(ret, r.Name)
-		}
-	}
-	return ret
 }
