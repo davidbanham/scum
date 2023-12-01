@@ -1,0 +1,80 @@
+{{ define "stepped_timepicker" }}
+<!-- This is a hack because iOS doesn't support the step increment for timepickers. Yaaaay Safari. -->
+{{ $uniq := uniq }}
+{{$pickedTime := (roundTime .Value 15)}}
+{{$pickedHour := $pickedTime.Format "15"}}
+{{$pickedMinutes := $pickedTime.Format "04"}}
+
+<div class="flex flex-col gap-1">
+  {{ if .Label }}
+  <label class="block text-md font-medium text-gray-700 {{if .HideLabel}}sr-only{{end}}">{{.Label}}</label>
+  {{ end }}
+  <input autocomplete="off" type="hidden" id="{{$uniq}}-real" name="{{.Name}}" value="{{$pickedTime.Format "15:04"}}">
+
+  <div class="grid grid-cols-2 gap-1">
+    <div>
+      <select
+        aria-label="hour" 
+        class="text-md font-medium text-gray-900 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+        id="{{$uniq}}-hour"
+        {{if .Placeholder}}placeholder="{{.Placeholder}}"{{end}}
+        {{if .Required}}required{{end}}
+        {{if .Autocomplete}}autocomplete="{{.Autocomplete}}"{{else}}autocomplete="off"{{end}}
+        name="{{$uniq}}-hour">
+        <option {{if eq "00" $pickedHour}}selected{{end}} value="00">00</option>
+        <option {{if eq "01" $pickedHour}}selected{{end}} value="01">01</option>
+        <option {{if eq "02" $pickedHour}}selected{{end}} value="02">02</option>
+        <option {{if eq "03" $pickedHour}}selected{{end}} value="03">03</option>
+        <option {{if eq "04" $pickedHour}}selected{{end}} value="04">04</option>
+        <option {{if eq "05" $pickedHour}}selected{{end}} value="05">05</option>
+        <option {{if eq "06" $pickedHour}}selected{{end}} value="06">06</option>
+        <option {{if eq "07" $pickedHour}}selected{{end}} value="07">07</option>
+        <option {{if eq "08" $pickedHour}}selected{{end}} value="08">08</option>
+        <option {{if eq "09" $pickedHour}}selected{{end}} value="09">09</option>
+        <option {{if eq "10" $pickedHour}}selected{{end}} value="10">10</option>
+        <option {{if eq "11" $pickedHour}}selected{{end}} value="11">11</option>
+        <option {{if eq "12" $pickedHour}}selected{{end}} value="12">12</option>
+        <option {{if eq "13" $pickedHour}}selected{{end}} value="13">13</option>
+        <option {{if eq "14" $pickedHour}}selected{{end}} value="14">14</option>
+        <option {{if eq "15" $pickedHour}}selected{{end}} value="15">15</option>
+        <option {{if eq "16" $pickedHour}}selected{{end}} value="16">16</option>
+        <option {{if eq "17" $pickedHour}}selected{{end}} value="17">17</option>
+        <option {{if eq "18" $pickedHour}}selected{{end}} value="18">18</option>
+        <option {{if eq "19" $pickedHour}}selected{{end}} value="19">19</option>
+        <option {{if eq "20" $pickedHour}}selected{{end}} value="20">20</option>
+        <option {{if eq "21" $pickedHour}}selected{{end}} value="21">21</option>
+        <option {{if eq "22" $pickedHour}}selected{{end}} value="22">22</option>
+        <option {{if eq "23" $pickedHour}}selected{{end}} value="23">23</option>
+      </select>
+    </div>
+
+    <div>
+      <select 
+        aria-label="minutes" 
+        class="text-md font-medium text-gray-900 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+        id="{{$uniq}}-minutes"
+        {{if .Placeholder}}placeholder="{{.Placeholder}}"{{end}}
+        {{if .Required}}required{{end}}
+        {{if .Autocomplete}}autocomplete="{{.Autocomplete}}"{{else}}autocomplete="off"{{end}}
+        name="{{$uniq}}-minutes">
+        <option {{if eq "00" $pickedMinutes}}selected{{end}} value="00">00</option>
+        <option {{if eq "15" $pickedMinutes}}selected{{end}} value="15">15</option>
+        <option {{if eq "30" $pickedMinutes}}selected{{end}} value="30">30</option>
+        <option {{if eq "45" $pickedMinutes}}selected{{end}} value="45">45</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var updateRealInput = function(e) {
+      var hour = document.getElementById('{{$uniq}}-hour').value;
+      var minutes = document.getElementById('{{$uniq}}-minutes').value;
+      var real = document.getElementById('{{$uniq}}-real').value = hour + ':' + minutes;
+    };
+    document.getElementById('{{$uniq}}-hour').addEventListener('change', updateRealInput);
+    document.getElementById('{{$uniq}}-minutes').addEventListener('change', updateRealInput);
+  })();
+</script>
+{{ end }}

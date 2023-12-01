@@ -5,7 +5,7 @@
     (function() {
       const el = document.getElementById('{{$id}}');
       const dt = luxon.DateTime.fromISO("{{ isoTime . }}");
-      el.innerText = dt.toFormat("ff");
+      el.innerText = dt.toFormat("dd LLL yy T");
       el.title = dt.toFormat("ff ZZZZ");
     })();
   </script>

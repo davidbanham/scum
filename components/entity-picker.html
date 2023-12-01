@@ -3,17 +3,17 @@
 {{ $selectedMap := .SelectedElems.ByID }}
 <label for="{{$uniqID}}" class="block text-sm font-medium text-gray-700 {{if .HideLabel}}sr-only{{end}}">{{.Title}}</label>
 <div class="flex mt-1 text-sm text-gray-900">
-  <div class="w-full">
+  <div class="choices-picker w-full">
     <select
-       class="choices-picker w-full text-md font-medium text-gray-900 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
-       autocomplete="off"
-       id="{{$uniqID}}"
-       name="{{.Name}}"
-       {{ if .Multiple }}multiple{{ end }}
-       >
-      <option
-          value=""
-          >Select {{.Title}}</option>
+        class="w-full text-md font-medium text-gray-900 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
+        autocomplete="off"
+        id="{{$uniqID}}"
+        name="{{.Name}}"
+        {{ if .Multiple }}multiple{{ end }}
+        >
+        <option
+            value=""
+            >{{if .SelectText}}{{.SelectText}}{{else}}Select{{end}} {{.Title}}</option>
       {{ range .Elems.Data }}
       <option
           value="{{.ID}}"

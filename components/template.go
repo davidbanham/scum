@@ -38,6 +38,15 @@ var FuncMap = template.FuncMap{
 	"humanTime": func(t time.Time) string {
 		return t.Format(time.RFC822)
 	},
+	"dateonly": func(t time.Time) string {
+		return t.Format(time.DateOnly)
+	},
+	"timeonly": func(t time.Time) string {
+		return t.Format(time.TimeOnly)
+	},
+	"roundTime": func(input time.Time, minutes int) time.Time {
+		return input.Round(time.Duration(minutes) * time.Minute)
+	},
 	"dict": func(values ...interface{}) (map[string]interface{}, error) {
 		if len(values)%2 != 0 {
 			return nil, errors.New("invalid dict call")
