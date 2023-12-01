@@ -37,7 +37,9 @@ func (this *ByOrg) Construct(columns []string, table string, filters filter.Filt
 	filterQuery, filterProps := filters.Query(2)
 	this.props = append(this.props, filterProps...)
 
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND organisation_id = $1 ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, order, pagination.PaginationQuery())
+	tableOnly := strings.Split(table, " ")[0]
+
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND %s.organisation_id = $1 ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, tableOnly, order, pagination.PaginationQuery())
 }
 func (this *ByOrg) Args() []any {
 	return append([]any{this.ID}, this.props...)
@@ -52,7 +54,9 @@ func (this *ByUser) Construct(columns []string, table string, filters filter.Fil
 	filterQuery, filterProps := filters.Query(2)
 	this.props = append(this.props, filterProps...)
 
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND user_id = $1 ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, order, pagination.PaginationQuery())
+	tableOnly := strings.Split(table, " ")[0]
+
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND %s.user_id = $1 ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, tableOnly, order, pagination.PaginationQuery())
 }
 func (this *ByUser) Args() []any {
 	return append([]any{this.ID}, this.props...)
@@ -67,23 +71,10 @@ func (this *ByIDs) Construct(columns []string, table string, filters filter.Filt
 	filterQuery, filterProps := filters.Query(2)
 	this.props = append(this.props, filterProps...)
 
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND id = ANY($1) ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, order, pagination.PaginationQuery())
+	tableOnly := strings.Split(table, " ")[0]
+
+	return fmt.Sprintf(`SELECT %s FROM %s %s AND %s.id = ANY($1) ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, tableOnly, order, pagination.PaginationQuery())
 }
 func (this *ByIDs) Args() []any {
 	return append([]any{pq.Array(this.IDs)}, this.props...)
-}
-
-type ByEntityID struct {
-	EntityID string
-	props    []any
-}
-
-func (this *ByEntityID) Construct(columns []string, table string, filters filter.Filters, pagination pagination.Pagination, order string) string {
-	filterQuery, filterProps := filters.Query(2)
-	this.props = append(this.props, filterProps...)
-
-	return fmt.Sprintf(`SELECT %s FROM %s %s AND entity_id = ($1) ORDER BY %s %s`, strings.Join(columns, ", "), table, filterQuery, order, pagination.PaginationQuery())
-}
-func (this *ByEntityID) Args() []any {
-	return append([]any{this.EntityID}, this.props...)
 }
