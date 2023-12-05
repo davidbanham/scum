@@ -1,38 +1,43 @@
 {{ define "toggle" }}
+{{ $container := uniq }}
 {{ $outer := uniq }}
 {{ $inner := uniq }}
 {{ $input := uniq }}
 {{ $label := uniq }}
+{{ $selectedClass := "bg-indigo-600" }}
+{{ if .SelectedClass }}
+{{ $selectedClass = .SelectedClass  }}
+{{ end }}
 {{ if .Right }}
-<div class="flex gap-1 items-center">
+<div id="{{$container}}" class="flex gap-1 items-center">
   <button
       aria-labelledby="{{$label}}"
       id="{{$outer}}"
       type="button"
       role="switch"
       aria-checked="false"
-      class="{{ if .Selected }} bg-indigo-600 {{ else }} bg-gray-200 {{ end }} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+      class="{{ if .Selected }} {{$selectedClass}} {{ else }} bg-gray-200 {{ end }} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
     <span id="{{$inner}}"
           aria-hidden="true"
           class="{{ if .Selected }} translate-x-5 {{ else }} translate-x-0 {{ end }} pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200">
     </span>
   </button>
   <span class="ml-3">
-    <span id="{{$label}}" class="text-sm font-medium text-gray-900">{{.Label}}</span>
+    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{.Label}}</span>
   </span>
   <input autocomplete="off" id="{{$input}}" class="hidden" hidden type="checkbox" name="{{.Key}}" value="{{.Value}}" {{ if .Selected }} checked {{ end }} {{ if .Form }} form="{{.Form}}" {{ end }}>
   {{ template "toggle_spinner" }}
 </div>
 {{ else }}
-<div class="flex {{ if .Vertical }}flex-col{{ end }} gap-1 items-center justify-between">
+<div id="{{$container}}" class="flex {{ if .Vertical }}flex-col{{ end }} gap-1 items-center justify-between">
   <span class="flex-grow flex flex-col">
-    <span id="{{$label}}" class="text-sm font-medium text-gray-900">{{.Label}}</span>
+    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{.Label}}</span>
   </span>
   {{ template "toggle_spinner" }}
   <button
       id="{{$outer}}"
       type="button"
-      class="{{ if .Selected }} bg-indigo-600 {{ else }} bg-gray-200 {{ end }} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      class="{{ if .Selected }} {{$selectedClass}} {{ else }} bg-gray-200 {{ end }} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       role="switch"
       aria-checked="false"
       aria-labelledby="{{$label}}">
@@ -53,9 +58,9 @@
 {{ end }}
 
 <script>
-  document.getElementById("{{$outer}}").addEventListener("click", function(e) {
+  document.getElementById("{{$container}}").addEventListener("click", function(e) {
     const outer = document.getElementById("{{$outer}}")
-    outer.classList.toggle("bg-indigo-600");
+    outer.classList.toggle("{{$selectedClass}}");
     outer.classList.toggle("bg-gray-200");
     const inner = document.getElementById("{{$inner}}")
     inner.classList.toggle("translate-x-5");
@@ -70,6 +75,8 @@
     {{ end }}
     {{ if .AutoSubmit }}
     input.form.requestSubmit()
+    {{ else }}
+    input.form.dispatchEvent(new CustomEvent('change'));
     {{ end }}
   });
 </script>
