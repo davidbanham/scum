@@ -9,11 +9,8 @@
         autocomplete="off"
         id="{{$uniqID}}"
         name="{{.Name}}"
-        {{ if .Multiple }}multiple{{ end }}
-        >
-        <option
-            value=""
-            >{{if .SelectText}}{{.SelectText}}{{else}}Select{{end}} {{.Title}}</option>
+        {{ if .Multiple }}multiple{{ end }}>
+      <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select{{end}} {{.Title}}</option>
       {{ range .Elems.Data }}
       <option
           value="{{.ID}}"
