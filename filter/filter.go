@@ -122,7 +122,16 @@ func (this *dateBase) Populate(prefix string, form url.Values) error {
 
 type Filters []Filter
 
-func (filters Filters) ByID() map[string]Filter {
+func (filters Filters) ByID(id string) Filter {
+	for _, filter := range filters {
+		if filter.ID() == id {
+			return filter
+		}
+	}
+	return &invalidFilter{}
+}
+
+func (filters Filters) IDMap() map[string]Filter {
 	ret := map[string]Filter{}
 	for _, filter := range filters {
 		ret[filter.ID()] = filter
@@ -148,7 +157,7 @@ func (filters Filters) Query(propIndex int) (string, []any) {
 func (filters *Filters) FromForm(form url.Values, availableFilters Filters, customFilters ...Filter) error {
 	activeFilters := Filters{}
 
-	availableFiltersByID := availableFilters.ByID()
+	availableFiltersByID := availableFilters.IDMap()
 	for _, k := range form["filter"] {
 		f, ok := availableFiltersByID[k]
 		if ok {
@@ -166,6 +175,14 @@ func (filters *Filters) FromForm(form url.Values, availableFilters Filters, cust
 	}
 	(*filters) = append((*filters), activeFilters...)
 	return nil
+}
+
+type invalidFilter struct {
+	filterBase
+}
+
+func (this invalidFilter) Query(int) (string, []any) {
+	return "true = false", []any{}
 }
 
 type HasProp struct {

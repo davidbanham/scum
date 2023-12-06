@@ -23,7 +23,7 @@
           {{ end }}
 
           {{ range .Entity.AvailableFilters }}
-          {{ if not (index $.Entity.Criteria.Filters.ByID .ID)}}
+          {{ if not ($.Entity.Criteria.Filters.ByID .ID)}}
           <option value="{{.ID}}">{{.Label}}</option>
           {{ end }}
           {{ end }}
