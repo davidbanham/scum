@@ -52,7 +52,9 @@
 <script>
   (function() {
     const self = document.getElementById('{{.ID}}');
+    {{ if not .NoRelocate }}
     document.body.appendChild(self);
+    {{ end }}
 
     self.addEventListener('hide', function() {
       self.classList.add('hidden')

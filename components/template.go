@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/davidbanham/heroicons"
+	"github.com/davidbanham/scum/util"
 	"github.com/microcosm-cc/bluemonday"
 	uuid "github.com/satori/go.uuid"
 )
@@ -93,6 +94,7 @@ var FuncMap = template.FuncMap{
 		}
 		return crumbs, nil
 	},
+	"contains": util.Contains,
 }
 
 func selectorSafe(in string) string {

@@ -16,6 +16,8 @@
           value="{{.ID}}"
           {{ if (and $.Multiple $selectedMap) }}
             {{ if eq (index $selectedMap .ID).ID .ID }} selected {{ end }}
+          {{ else if (and $.Multiple $.SelectedIDs) }}
+            {{ if (contains $.SelectedIDs .ID) }} selected {{ end }}
           {{ else if $.Selected }}
             {{ if eq $.Selected.ID .ID}} selected {{ end }}
           {{ end }}
