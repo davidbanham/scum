@@ -8,7 +8,7 @@
         class="w-full text-md font-medium text-gray-900 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
         autocomplete="off"
         id="{{$uniqID}}"
-        name="{{.Label}}"
+        name="{{.Name}}"
         {{ if .Multiple }}multiple{{ end }}>
       <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select{{end}} {{.Title}}</option>
       {{ range .Elems.Data }}
