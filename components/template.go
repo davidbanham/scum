@@ -11,6 +11,8 @@ import (
 
 	"github.com/davidbanham/heroicons"
 	"github.com/davidbanham/scum/util"
+	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
 	uuid "github.com/satori/go.uuid"
 )
@@ -95,6 +97,14 @@ var FuncMap = template.FuncMap{
 		return crumbs, nil
 	},
 	"contains": util.Contains,
+	"markdown": func(str string) template.HTML {
+		extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
+		p := parser.NewWithExtensions(extensions)
+		md := []byte(str)
+		md = markdown.NormalizeNewlines(md)
+		output := markdown.ToHTML(md, p, nil)
+		return template.HTML(bluemonday.UGCPolicy().Sanitize(string(output)))
+	},
 }
 
 func selectorSafe(in string) string {

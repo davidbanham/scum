@@ -1,32 +1,58 @@
 {{ define "markdown_box" }}
-
-{{$id := selectorSafe (print "editable-" .Name "-" uniq) }}
-
 {{ if eq .Editable false }}
-<label for="{{$id}}" class="mt-1 text-sm text-gray-500">{{.Label}}</label>
-<p id="{{$id}}" class="mt-4 prose prose-l text-gray-500">{{noescape .Content}}</p>
+
+{{$id := selectorSafe (print .Name "-" uniq) }}
+{{ if .Label }}
+<label for="{{$id}}" class="mt-1 text-md text-gray-600">{{.Label}}</label>
+{{ end }}
+<div class="prose text-md text-gray-600">{{markdown .Content}}</div>
+<input type="hidden" name="{{.Name}}" id="{{$id}}" value="{{.Content}}">
+
 {{ else }}
 
+{{$id := selectorSafe (print "editable-" .Name "-" uniq) }}
+<label for="{{$id}}" class="pb-2 text-sm font-medium text-gray-700">{{.Label}}</label>
+  <textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="4" name="{{.Name}}" id="{{$id}}" class="p-2 pl-0 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{.Content}}</textarea>
 
-<script src="/js/medium-editor.js"></script>
-<link rel="stylesheet" href="/css/medium-editor.min.css">
-<link rel="stylesheet" href="/css/medium-editor-default-theme.min.css">
-
-<div>
-  <label for="{{$id}}" class="mt-1 text-sm text-gray-500">{{.Label}}</label>
-  <div class="mt-1">
-    <textarea rows="4" name="{{.Name}}" id="{{$id}}" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md">{{.Content}}</textarea>
-  </div>
-</div>
 <script>
   (function() {
-    new MediumEditor('#{{$id}}', {
-      toolbar: {
-        buttons: [ 'bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'orderedlist' ]
-      },
-      imageDragging: false,
-    });
+    let textarea = document.getElementById("{{$id}}");
+    function setup() {
+      let simplemde = new SimpleMDE({
+        initialValue: '{{.Content}}',
+        element: textarea,
+        forceSync: true,
+        status: false,
+        toolbar: ["bold", "italic", "link", "unordered-list", "ordered-list" ],
+      });
+
+      {{ if not .SwallowChangeEvent }}
+      simplemde.codemirror.on('change', function(){
+        let ev = new Event('change')
+
+        let orig = document.getElementById('{{$id}}');
+        if (orig.form) {
+          orig.form.dispatchEvent(ev);
+        }
+      });
+      {{ end }}
+
+      let parentModal = orig.closest('div[hidden]');
+      if (parentModal) {
+        const config = { attributes: true, childList: false, subtree: false };
+
+        let refreshCodeMirror = function(mutationList, observer) {
+          simplemde.codemirror.refresh()
+        }
+
+        const observer = new MutationObserver(refreshCodeMirror);
+        observer.observe(parentModal, config);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', setup , {once: true});
+    textarea.addEventListener('hydrateMarkdown', setup );
   })();
 </script>
+
 {{ end }}
 {{ end }}
