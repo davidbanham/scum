@@ -41,6 +41,10 @@ type filterBase struct {
 	table string
 }
 
+func (this *filterBase) InputValues() []string {
+	return []string{}
+}
+
 func (this *filterBase) Populate(url.Values) error {
 	return nil
 }
@@ -226,6 +230,10 @@ type Custom struct {
 	CustomLabel string
 }
 
+func (this Custom) InputValues() []string {
+	return this.Values
+}
+
 func (this Custom) Query(propIndex int) (string, []any) {
 	if len(this.Values) == 0 {
 		return "true = true", []any{}
@@ -263,6 +271,10 @@ type FilterSet struct {
 	CustomLabel string
 	IsAnd       bool
 	Values      []string
+}
+
+func (this FilterSet) InputValues() []string {
+	return this.Values
 }
 
 func (this FilterSet) Query(propIndex int) (string, []any) {

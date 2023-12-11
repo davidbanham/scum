@@ -23,7 +23,7 @@
           {{ end }}
 
           {{ range .Entity.AvailableFilters }}
-          {{ if not ($.Entity.Criteria.Filters.ByID .ID)}}
+          {{ if not ($.Entity.Criteria.Filters.ByID .ID).ID}}
           <option value="{{.ID}}">{{.Label}}</option>
           {{ end }}
           {{ end }}
@@ -37,8 +37,8 @@
         {{ template "start_end_date" dict "Period" $filter.Period "Prefix" (print $filter.ID "-") "Label" $filter.Label }}
       </div>
       {{ else if eq . "hidden" }}
-      {{ range $filter.Values }}
-      <input type="hidden" data-parentfilter="{{$filter.ID}}" name="{{$filter.CustomID}}" value="{{.}}">
+      {{ range $filter.InputValues }}
+      <input type="hidden" data-parentfilter="{{$filter.ID}}" name="{{$filter.ID}}" value="{{.}}">
       {{ end }}
       {{ end }}
       {{ end }}
