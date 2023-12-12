@@ -21,3 +21,43 @@ func ParseDateTimePair(d, t string, loc *time.Location) (time.Time, error) {
 	}
 	return CombineDateTimePair(parsedDate, parsedTime).In(loc), nil
 }
+
+type Gettable interface {
+	// For example, url.Values
+	Get(string) string
+}
+
+func DefaultedDatesFromForm(form Gettable, numDaysFromNowDefault int, weekBoundary bool) (startTime, endTime time.Time, err error) {
+	start := form.Get("start")
+	end := form.Get("end")
+
+	format := "2006-01-02"
+	begin := time.Now()
+
+	if weekBoundary {
+		begin = NextDay(begin, time.Sunday)
+	}
+
+	now := begin.Format(format)
+	then := begin.Add(24 * time.Duration(numDaysFromNowDefault) * time.Hour).Format(format)
+
+	startTime, _ = time.Parse(format, now)
+	endTime, _ = time.Parse(format, then)
+
+	if start != "" {
+		parsed, err := time.Parse(format, start)
+		if err != nil {
+			return startTime, endTime, err
+		}
+		startTime = parsed
+	}
+	if end != "" {
+		parsed, err := time.Parse(format, end)
+		if err != nil {
+			return startTime, endTime, err
+		}
+		endTime = parsed
+	}
+
+	return startTime, endTime, nil
+}
