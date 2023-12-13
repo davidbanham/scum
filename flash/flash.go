@@ -47,29 +47,20 @@ type FlashAction struct {
 	Text string
 }
 
-func (this *Flash) Add(ctx context.Context) (context.Context, error) {
-	this.ID = uuid.NewV4().String()
-
-	flashes := Flashes{}
-	unconv := ctx.Value("flashes")
-	if unconv != nil {
-		flashes = unconv.(Flashes)
-	}
-	flashes = append(flashes, *this)
-	if this.Persistent {
-		key := this.EntityKey
-		if key == "" {
-			key = "user"
-		}
-		unconv := ctx.Value(key)
-		if unconv != nil {
-			user := unconv.(Flashable)
-			if err := user.PersistFlash(ctx, *this); err != nil {
-				return ctx, err
-			}
+func (this *Flashes) Add(flash Flash) {
+	alreadyThere := false
+	for _, existing := range *this {
+		if flash.OnceOnlyKey != "" && flash.OnceOnlyKey == existing.OnceOnlyKey {
+			alreadyThere = true
 		}
 	}
-	return context.WithValue(ctx, "flashes", flashes), nil
+	if alreadyThere {
+		return
+	}
+	if flash.ID == "" {
+		flash.ID = uuid.NewV4().String()
+	}
+	(*this) = append((*this), flash)
 }
 
 type FlashLevel int
