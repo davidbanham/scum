@@ -1,23 +1,19 @@
 {{ define "markup_box" }}
-
 {{$id := selectorSafe (print "editable-" .Name "-" uniq) }}
 
 {{ if eq .Editable false }}
-<label for="{{$id}}" class="mt-1 text-sm text-gray-500">{{.Label}}</label>
-<p id="{{$id}}" class="mt-4 prose prose-l text-gray-500">{{noescape .Content}}</p>
-{{ else }}
 
+<label for="{{$id}}" class="text-sm text-gray-500">{{.Label}}</label>
+<p id="{{$id}}" class="prose prose-l text-gray-500">{{noescape .Content}}</p>
+
+{{ else }}
 
 <script src="/js/medium-editor.js"></script>
 <link rel="stylesheet" href="/css/medium-editor.min.css">
 <link rel="stylesheet" href="/css/medium-editor-default-theme.min.css">
 
-<div>
-  <label for="{{$id}}" class="mt-1 text-sm text-gray-500">{{.Label}}</label>
-  <div class="mt-1">
-    <textarea rows="4" name="{{.Name}}" id="{{$id}}" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md">{{.Content}}</textarea>
-  </div>
-</div>
+<label for="{{$id}}" class="text-sm text-gray-500">{{.Label}}</label>
+<textarea rows="4" name="{{.Name}}" id="{{$id}}" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md">{{.Content}}</textarea>
 <script>
   (function() {
     new MediumEditor('#{{$id}}', {
@@ -28,5 +24,6 @@
     });
   })();
 </script>
+
 {{ end }}
 {{ end }}
