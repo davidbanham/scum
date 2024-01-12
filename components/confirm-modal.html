@@ -44,6 +44,10 @@
     Array.prototype.filter.call(closers, el => el.addEventListener('click', function() {
       document.getElementById('{{.ID}}').classList.toggle('hidden');
     }));
+    {{ if .Relocate }}
+    const self = document.getElementById('{{.ID}}');
+    document.body.appendChild(self);
+    {{ end }}
   })();
 </script>
 {{ end }}
