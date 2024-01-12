@@ -57,7 +57,7 @@ func (this *Audits) FindAll(ctx context.Context, criteria Criteria) error {
 
 	switch v := criteria.Query.(type) {
 	case query.Query:
-		rows, err = db.QueryContext(ctx, v.Construct(cols, "audit_log LEFT JOIN users ON audit_log.user_id = users.id::text", criteria.Filters, criteria.Pagination, "stamp"), v.Args()...)
+		rows, err = db.QueryContext(ctx, v.Construct(cols, "audit_log LEFT JOIN users ON audit_log.user_id = users.id::text", criteria.Filters, criteria.Pagination, query.Order{By: "stamp"}), v.Args()...)
 	}
 	if err != nil {
 		return err
