@@ -8,6 +8,16 @@
 {{ if .SelectedClass }}
 {{ $selectedClass = .SelectedClass  }}
 {{ end }}
+
+{{ $label := .Label }}
+{{ if (or .YesLabel .NoLabel) }}
+{{ if .Selected }}
+{{ $label = .YesLabel }}
+{{ else }}
+{{ $label = .NoLabel }}
+{{ end }}
+{{ end }}
+
 {{ if .Right }}
 <div id="{{$container}}" class="flex gap-1 items-center">
   <button
@@ -23,7 +33,7 @@
     </span>
   </button>
   <span class="ml-3">
-    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{.Label}}</span>
+    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$label}}</span>
   </span>
   <input autocomplete="off" id="{{$input}}" class="hidden" hidden type="checkbox" name="{{.Key}}" value="{{.Value}}" {{ if .Selected }} checked {{ end }} {{ if .Form }} form="{{.Form}}" {{ end }}>
   {{ template "toggle_spinner" }}
@@ -31,7 +41,7 @@
 {{ else }}
 <div id="{{$container}}" class="flex {{ if .Vertical }}flex-col{{ end }} gap-1 items-center justify-between">
   <span class="flex-grow flex flex-col">
-    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{.Label}}</span>
+    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$label}}</span>
   </span>
   {{ template "toggle_spinner" }}
   <button
@@ -67,6 +77,18 @@
     inner.classList.toggle("translate-x-0");
     const input = document.getElementById("{{$input}}")
     input.checked = !input.checked;
+
+
+    {{ if (or .YesLabel .NoLabel) }}
+    let newLabel = ""
+    if (input.checked) {
+      newLabel = "{{.YesLabel}}"
+    } else {
+      newLabel = "{{.NoLabel}}"
+    }
+    document.getElementById('{{$label}}').innerText = newLabel;
+    {{ end }}
+
     {{ if .Anchor }}
     const elem = input.form.querySelector("[name=next_fragment]")
     if (elem) {
