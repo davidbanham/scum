@@ -35,7 +35,7 @@
 <script>
   (function(){
     const elem = document.getElementById('{{$uniqID}}');
-    new Choices(elem, {});
+    const instance = new Choices(elem, {});
 
     {{ if .AutoSubmit }}
     function debounce(func, timeout){
@@ -52,6 +52,12 @@
     elem.addEventListener('change', debounce(function(ev) {
       elem.form.requestSubmit();
     }, 1000));
+    {{ end }}
+
+    {{ if .AutoClose }}
+    elem.addEventListener('change', function(ev) {
+      instance.hideDropdown();
+    });
     {{ end }}
   })()
 </script>
