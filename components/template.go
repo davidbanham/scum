@@ -41,6 +41,13 @@ var FuncMap = template.FuncMap{
 	"humanTime": func(t time.Time) string {
 		return t.Format(time.RFC822)
 	},
+	"humanDayDate": func(t time.Time) string {
+		loc, err := time.LoadLocation("Australia/Sydney")
+		if err != nil {
+			loc, _ = time.LoadLocation("UTC")
+		}
+		return t.In(loc).Format("Mon 02 Jan 2006")
+	},
 	"dateonly": func(t time.Time) string {
 		return t.Format(time.DateOnly)
 	},
