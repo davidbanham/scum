@@ -96,7 +96,7 @@
     {{ if .AutoSubmit }}
     input.form.requestSubmit()
     {{ else }}
-    input.form.dispatchEvent(new CustomEvent('change'));
+    input.dispatchEvent(new CustomEvent('change', {bubbles: true}));
     {{ end }}
   });
 </script>
