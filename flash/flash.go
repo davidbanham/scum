@@ -24,6 +24,44 @@ type Flash struct {
 	OnceOnlyKey string        `json:"once_only_key"`
 }
 
+func (this Flash) Value() (driver.Value, error) {
+	return json.Marshal(this)
+}
+
+func (this *Flash) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &this)
+}
+
+func (this *Flash) Add(ctx context.Context) error {
+	this.ID = uuid.NewV4().String()
+
+	flashes := Flashes{}
+	unconv := ctx.Value("flashes")
+	if unconv != nil {
+		flashes = unconv.(Flashes)
+	}
+	flashes = append(flashes, *this)
+	if this.Persistent {
+		key := this.EntityKey
+		if key == "" {
+			key = "user"
+		}
+		unconv := ctx.Value(key)
+		if unconv != nil {
+			user := unconv.(Flashable)
+			if err := user.PersistFlash(ctx, *this); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 type Flashes []Flash
 
 func (this Flashes) Value() (driver.Value, error) {
