@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"strconv"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -108,3 +109,31 @@ const (
 	Success
 	Info
 )
+
+func (this FlashLevel) Levels() []FlashLevel {
+	return []FlashLevel{
+		Warn, Success, Info,
+	}
+}
+
+func (this FlashLevel) Label() string {
+	switch this {
+	case Warn:
+		return "Warning"
+	case Success:
+		return "Success"
+	case Info:
+		return "Information"
+	}
+	return "Unknown"
+}
+
+func (this *FlashLevel) FromString(in string) error {
+	parsed, err := strconv.Atoi(in)
+	if err != nil {
+		return err
+	}
+	(*this) = FlashLevel(parsed)
+
+	return nil
+}
