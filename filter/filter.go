@@ -76,9 +76,7 @@ type dateBase struct {
 }
 
 func (this dateBase) Query(propIndex int) (string, []any) {
-	start := strings.Replace(this.period.Start.Format(time.RFC3339), "T", " ", 1)
-	end := strings.Replace(this.period.End.Format(time.RFC3339), "T", " ", 1)
-	return fmt.Sprintf("%s.%s BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{start, end}
+	return fmt.Sprintf("DATE_TRUNC('day', %s.%s) BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{this.period.Start, this.period.End}
 }
 
 func (this dateBase) Inputs() []string {
