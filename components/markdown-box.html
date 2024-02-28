@@ -12,7 +12,7 @@
 
 {{$id := selectorSafe (print "editable-" .Name "-" uniq) }}
 <label for="{{$id}}" class="pb-2 text-sm font-medium text-gray-700">{{.Label}}</label>
-  <textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="4" name="{{.Name}}" id="{{$id}}" class="p-2 pl-0 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{.Content}}</textarea>
+  <textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="4" name="{{.Name}}" id="{{$id}}" class="p-2 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{.Content}}</textarea>
 
 <script>
   (function() {
