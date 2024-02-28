@@ -24,9 +24,9 @@ var heroIcons heroicons.Icons
 
 var FuncMap = template.FuncMap{
 	"uniq": func() string {
-		return selectorSafe(uuid.NewV4().String())
+		return util.SelectorSafe(uuid.NewV4().String())
 	},
-	"selectorSafe": selectorSafe,
+	"selectorSafe": util.SelectorSafe,
 	"heroIcon": func(name string) template.HTML {
 		icon, err := heroIcons.ByName(name)
 		if err != nil {
@@ -112,12 +112,6 @@ var FuncMap = template.FuncMap{
 		output := markdown.ToHTML(md, p, nil)
 		return template.HTML(bluemonday.UGCPolicy().Sanitize(string(output)))
 	},
-}
-
-func selectorSafe(in string) string {
-	// Prepend with a because browsers reject querySelectors that start with a number
-	// Replace . with - for the same reason
-	return strings.ReplaceAll("a"+in, ".", "-")
 }
 
 func Tmpl() (*template.Template, error) {

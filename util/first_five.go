@@ -3,16 +3,9 @@ package util
 import "strings"
 
 func FirstFiveChars(input string) string {
-	num := 5
-	if len(input) < 5 {
-		num = len(input)
-	}
-	return strings.ToUpper(input[:num])
+	return strings.ToUpper(Truncate(5, input))
 }
 
 func FirstChar(input string) string {
-	if input == "" {
-		return ""
-	}
-	return strings.ToUpper(input[:1])
+	return strings.ToUpper(Truncate(1, input))
 }
