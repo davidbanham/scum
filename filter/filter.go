@@ -104,6 +104,7 @@ func (this *dateBase) Hydrate(opts DateFilterOpts) error {
 func (this *dateBase) Populate(prefix string, form url.Values) error {
 	start := form.Get(prefix + "-start")
 	end := form.Get(prefix + "-end")
+	tz := form.Get(prefix + "-tz")
 	if start == "" || end == "" {
 		return nil
 	}
@@ -119,6 +120,13 @@ func (this *dateBase) Populate(prefix string, form url.Values) error {
 	p.Start = s
 	p.End = e
 	this.period = p
+	if tz != "" {
+		loc, _ := time.LoadLocation(tz)
+		if loc != nil {
+			p.Start = p.Start.In(loc)
+			p.End = p.End.In(loc)
+		}
+	}
 	return nil
 }
 
