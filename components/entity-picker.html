@@ -10,7 +10,7 @@
         id="{{$uniqID}}"
         name="{{.Name}}"
         {{ if .Multiple }}multiple{{ end }}>
-      <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select{{end}} {{.Title}}</option>
+      <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select {{.Title}}{{end}}</option>
       {{ range .Elems.Data }}
       <option
           value="{{.ID}}"
@@ -18,6 +18,8 @@
             {{ if eq (index $selectedMap .ID).ID .ID }} selected {{ end }}
           {{ else if (and $.Multiple $.SelectedIDs) }}
             {{ if (contains $.SelectedIDs .ID) }} selected {{ end }}
+          {{ else if $.SelectedID }}
+            {{ if eq $.SelectedID .ID}} selected {{ end }}
           {{ else if $.Selected }}
             {{ if eq $.Selected.ID .ID}} selected {{ end }}
           {{ end }}
