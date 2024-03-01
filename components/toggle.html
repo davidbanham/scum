@@ -18,7 +18,7 @@
 {{ end }}
 {{ end }}
 
-<div id="{{$container}}" class="flex {{ if .Vertical }}flex-col{{ end }} gap-1 items-center justify-between">
+<div id="{{$container}}" class="flex {{ if .Vertical }}flex-col{{ end }} gap-2 items-center justify-between">
   {{ if not .Right }}
   <span class="flex-grow flex flex-col">
     <span id="{{$label}}" class="{{ if .Vertical }}text-center{{ end }} text-sm font-medium text-gray-900">{{$labelText}}</span>
