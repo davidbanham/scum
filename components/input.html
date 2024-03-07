@@ -13,12 +13,21 @@
 
 {{ $id := uniq }}
 <div class="flex flex-col gap-2">
+  {{ if or .Label .HelpText }}
+  <div class="flex gap-1">
+
   {{ if .Label }}
   <label
       for="{{$id}}"
       class="block text-sm font-medium text-gray-700 {{if .HideLabel}}sr-only{{end}}">
     {{.Label}}
   </label>
+  {{ end }}
+  {{ if .HelpText }}
+  {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+  {{ end }}
+
+  </div>
   {{ end }}
   <div class="">
     <input
