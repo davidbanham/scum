@@ -1,7 +1,7 @@
 {{ define "flashbox" }}
 <div id="flashbox">
   {{range .Flashes }}
-  {{ $id := .ID }}
+  {{ $id := selectorSafe .ID }}
   {{ if eq .ID "" }}
   {{ $id = uniq }}
   {{ end }}
@@ -40,11 +40,14 @@
             (function() {
               document.getElementById('{{$id}}-destroyer').addEventListener('click', function() {
                 document.getElementById('{{$id}}').classList.add('hidden');
+                {{ if .ID }}
                 var req = new XMLHttpRequest();
-                req.open('post', '/flashes/{{$id}}/delete');
+                var target = '/flashes/{{.ID}}/delete';
+                req.open('post', '/flashes/{{.ID}}/delete');
                 var formData = new FormData();
                 formData.append('csrf', '{{$.CSRF}}');
                 req.send(formData);
+                {{ end }}
               });
             })();
           </script>

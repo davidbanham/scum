@@ -86,20 +86,18 @@ type FlashAction struct {
 	Text string
 }
 
-func (this *Flashes) Add(flash Flash) {
-	alreadyThere := false
+func (this *Flashes) Add(flash Flash) Flash {
 	for _, existing := range *this {
 		if flash.OnceOnlyKey != "" && flash.OnceOnlyKey == existing.OnceOnlyKey {
-			alreadyThere = true
+			return Flash{}
 		}
-	}
-	if alreadyThere {
-		return
 	}
 	if flash.ID == "" {
 		flash.ID = uuid.NewV4().String()
 	}
 	(*this) = append((*this), flash)
+
+	return flash
 }
 
 type FlashLevel int
