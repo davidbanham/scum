@@ -12,7 +12,7 @@
 
 {{$id := selectorSafe (print "editable-" .Name "-" uniq) }}
 <label for="{{$id}}" class="pb-2 text-sm font-medium text-gray-700">{{.Label}}</label>
-<textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="4" name="{{.Name}}" id="{{$id}}" class="p-2 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{.Content}}</textarea>
+<textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="4" name="{{.Name}}" id="{{$id}}" class="markdown-editor p-2 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{.Content}}</textarea>
 
 {{ if .RichInput }}
 <!-- SimpleMDE -->
@@ -22,8 +22,16 @@
 <script>
   (function() {
     let textarea = document.getElementById("{{$id}}");
+    let instance = null;
+    function teardown() {
+      if (instance) {
+        instance.toTextArea();
+        instance = null;
+      }
+    };
     function setup() {
-      let simplemde = new SimpleMDE({
+      teardown();
+      instance = new SimpleMDE({
         initialValue: '{{.Content}}',
         element: textarea,
         forceSync: true,
@@ -32,30 +40,30 @@
       });
 
       {{ if not .SwallowChangeEvent }}
-      simplemde.codemirror.on('change', function(){
+      instance.codemirror.on('change', function(){
         let ev = new Event('change')
 
-        let orig = document.getElementById('{{$id}}');
-        if (orig.form) {
-          orig.form.dispatchEvent(ev);
+        if (textarea.form) {
+          textarea.form.dispatchEvent(ev);
         }
       });
       {{ end }}
 
-      let parentModal = orig.closest('div[hidden]');
-      if (parentModal) {
+      let hiddenContainer = textarea.closest('.hidden');
+      if (hiddenContainer) {
         const config = { attributes: true, childList: false, subtree: false };
 
         let refreshCodeMirror = function(mutationList, observer) {
-          simplemde.codemirror.refresh()
+          instance.codemirror.refresh()
         }
 
         const observer = new MutationObserver(refreshCodeMirror);
-        observer.observe(parentModal, config);
+        observer.observe(hiddenContainer, config);
       }
     }
     document.addEventListener('DOMContentLoaded', setup , {once: true});
     textarea.addEventListener('hydrateMarkdown', setup );
+    document.body.addEventListener('htmx:afterSettle', setup);
   })();
 </script>
 {{ end }}
