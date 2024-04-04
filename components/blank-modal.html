@@ -1,50 +1,51 @@
 {{ define "blank-modal" }}
 {{ $containerID := uniq }}
-<div id="{{.ID}}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-40 p-4 w-full md:inset-0 h-modal md:h-full">
-  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-      <div
-          aria-label="Close modal"
-          data-modalcloser="{{.ID}}"
-          class="absolute inset-0 bg-gray-500 opacity-75"
-          hx-trigger="keyup[escKey] from:body"
-          ></div>
-    </div>
+{{ $buttonContainerID := uniq }}
+<div id="{{.ID}}" class="hidden relative z-40" aria-labelledby="modal-title" role="dialog" aria-modal="true" tabindex="-1">
+  <div aria-label="Close modal" data-modalcloser="{{.ID}}" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity">
+  </div>
 
-    <!-- This element is to trick the browser into centering the modal contents. -->
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-lg w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-      <div class="sm:my-8 px-4 pt-5 pb-4 sm:p-6">
-        <div class="sm:flex sm:items-start">
-          {{ if .Icon }}
-          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-            <div class="h-6 w-6">
-              {{ heroIcon (print "outline/" .Icon) }}
+  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4 sm:items-center sm:p-0">
+      <div class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:my-8 w-full sm:max-w-lg">
+        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+
+            {{ if .Icon }}
+            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10">
+              <div class="h-6 w-6">
+                {{ heroIcon (print "outline/" .Icon) }}
+              </div>
             </div>
-          </div>
-          {{ end }}
-          <div class="w-full mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            {{ if .Title }}
-            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-              {{.Title}}
-            </h3>
             {{ end }}
-            {{ if .Text }}
-            <p class="text-sm text-gray-500">
-            {{ .Text }}
-            </p>
-            {{ end }}
-            <div id="{{$containerID}}" class="mt-2">
-              <div class="w-full contents">
+            <div class="w-full mt-3 sm:mt-0 sm:text-left flex flex-col gap-4">
+              {{ if .Title }}
+              <h3 class="text-lg text-center leading-6 font-medium text-gray-900" id="modal-headline">
+                {{.Title}}
+              </h3>
+              {{ end }}
+              {{ if .Text }}
+              <p class="text-sm text-center text-gray-500">
+              {{ .Text }}
+              </p>
+              {{ end }}
+              <div id="{{$containerID}}" class="mt-2">
+                <div class="w-full contents">
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-        <button data-modalcloser="{{.ID}}" type="button" class="submit-spinner mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
-          Close
-        </button>
+        {{ if not .Buttons }}
+        <div id="{{$buttonContainerID}}" class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button data-modalcloser="{{.ID}}" type="button" class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:w-auto">
+            Close
+          </button>
+        </div>
+        {{ else }}
+        <div id="{{$buttonContainerID}}">
+        </div>
+        {{ end }}
       </div>
     </div>
   </div>
@@ -90,6 +91,11 @@
     const container = document.getElementById('{{$containerID}}');
     const contents = document.getElementById('{{.Contents}}');
     container.querySelector('.contents').appendChild(contents);
+    {{ end }}
+    {{ if .Buttons }}
+    const buttonContainer = document.getElementById('{{$buttonContainerID}}');
+    const buttons = document.getElementById('{{.Buttons}}');
+    buttonContainer.appendChild(buttons);
     {{ end }}
   })();
 </script>

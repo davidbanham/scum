@@ -1,53 +1,45 @@
 {{ define "confirm_modal" }}
-<div id="{{.ID}}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-40 p-4 w-full md:inset-0 h-modal md:h-full">
-  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-      <div data-modalcloser="{{.ID}}" class="absolute inset-0 bg-gray-500 opacity-75"></div>
-    </div>
 
-    <!-- This element is to trick the browser into centering the modal contents. -->
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-    <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-      <div class="sm:flex sm:items-start">
-        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-          {{ heroIcon "outline/exclamation-circle" }}
-        </div>
-        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-          <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-            {{.Title}}
-          </h3>
-          <div class="mt-2">
-            <p class="text-sm text-gray-500">
-            {{.Text}}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-        <button type="submit" {{ if .Form }}form="{{.Form}}"{{ end }} class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
-          {{.ButtonText}}
-        </button>
-        <button data-modalcloser="{{.ID}}" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
-          Cancel
-        </button>
-      </div>
-    </div>
+{{ if false }}
+<!-- Dummy for tailwind compilers -->
+<span class="bg-red-100 bg-red-600 hover:bg-red-700 focus:ring-red-500"></span>
+<span class="bg-orange-100 bg-orange-600 hover:bg-orange-700 focus:ring-orange-500"></span>
+<span class="bg-green-100 bg-green-600 hover:bg-green-700 focus:ring-green-500"></span>
+<span class="bg-gray-100 bg-gray-600 hover:bg-gray-700 focus:ring-gray-500"></span>
+{{ end }}
+
+{{ $color := "red" }}
+{{ $icon := "outline/exclamation-circle" }}
+
+{{ if .Level }}
+{{ if eq .Level "warn" }}
+{{ $color = "orange" }}
+{{ $icon = "outline/exclamation-triangle" }}
+{{ else if eq .Level "success" }}
+{{ $color = "green" }}
+{{ $icon = "outline/check-circle" }}
+{{ else if eq .Level "info" }}
+{{ $color = "gray" }}
+{{ $icon = "outline/information-circle" }}
+{{ end }}
+{{ end }}
+
+{{ if .Icon }}
+{{ $icon = .Icon }}
+{{ end }}
+
+{{$modalContentsID := uniq }}
+
+<div class="hidden">
+  <div id="{{$modalContentsID}}" class="bg-gray-50 py-2 px-4 mt-5 flex flex-col sm:flex-row gap-2">
+    <button data-modalcloser="{{.ID}}" type="button" class="flex-grow inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:w-auto">
+      Close
+    </button>
+    <button type="submit" {{ if .Form }}form="{{.Form}}"{{ end }} class="flex-grow w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-{{$color}}-600 text-base font-medium text-white hover:bg-{{$color}}-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-{{$color}}-500 sm:w-auto sm:text-sm">
+      {{.ButtonText}}
+    </button>
   </div>
 </div>
-<script>
-  (function() {
-    const triggers = document.querySelectorAll('*[data-modaltrigger="{{.ID}}"]')
-    Array.prototype.filter.call(triggers, el => el.addEventListener('click', function() {
-      document.getElementById('{{.ID}}').classList.toggle('hidden');
-    }));
-    const closers = document.querySelectorAll('*[data-modalcloser="{{.ID}}"]')
-    Array.prototype.filter.call(closers, el => el.addEventListener('click', function() {
-      document.getElementById('{{.ID}}').classList.toggle('hidden');
-    }));
-    {{ if .Relocate }}
-    const self = document.getElementById('{{.ID}}');
-    document.body.appendChild(self);
-    {{ end }}
-  })();
-</script>
+{{ template "blank-modal" dict "Buttons" $modalContentsID "ID" .ID "Title" .Title "Text" .Text "NoRelocate" (not .Relocate) }}
+
 {{ end }}
