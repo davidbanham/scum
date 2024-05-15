@@ -57,8 +57,8 @@ func (roles Roles) CanOnly(name string) bool {
 func (roles Roles) CanOver(name string, entityID string) bool {
 	for _, role := range roles {
 		for _, sub := range role.Over {
-			if sub == "*" {
-				return true
+			if sub == "*" && role.Name == name {
+				return role.Can(name)
 			}
 			if sub == entityID {
 				return role.Can(name)
