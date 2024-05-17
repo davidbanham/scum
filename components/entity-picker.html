@@ -11,19 +11,42 @@
         name="{{.Name}}"
         {{ if .Multiple }}multiple{{ end }}>
       <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select {{.Title}}{{end}}</option>
+      {{ if (and $.Multiple $.SelectedIDs) }}
+        <!-- Preserve ordinality -->
+        {{ $byID := $.Elems.ByID }}
+        {{ range $.SelectedIDs }}
+        {{ $elem := (index $byID .) }}
+        <option
+            value="{{$elem.ID}}"
+            selected
+            >{{$elem.Label}}</option>
+        {{ end }}
+        {{ range $.Elems.Data }}
+        {{ if not (contains $.SelectedIDs .ID) }}
+        <option
+            value="{{.ID}}"
+            >{{.Label}}</option>
+        {{ end }}
+        {{ end }}
+
+      {{ else }}
+
       {{ range .Elems.Data }}
       <option
           value="{{.ID}}"
           {{ if (and $.Multiple $selectedMap) }}
             {{ if eq (index $selectedMap .ID).ID .ID }} selected {{ end }}
-          {{ else if (and $.Multiple $.SelectedIDs) }}
-            {{ if (contains $.SelectedIDs .ID) }} selected {{ end }}
-          {{ else if $.SelectedID }}
-            {{ if eq $.SelectedID .ID}} selected {{ end }}
-          {{ else if $.Selected }}
-            {{ if eq $.Selected.ID .ID}} selected {{ end }}
+          {{ else }}
+            {{ if $.SelectedID }}
+              {{ if eq $.SelectedID .ID}} selected {{ end }}
+            {{ else if $.Selected }}
+              {{ if eq $.Selected.ID .ID}} selected {{ end }}
+            {{ end }}
           {{ end }}
+
           >{{.Label}}</option>
+      {{ end }}
+
       {{ end }}
     </select>
   </div>
@@ -37,7 +60,9 @@
 <script>
   (function(){
     const elem = document.getElementById('{{$uniqID}}');
-    const instance = new Choices(elem, {});
+    const instance = new Choices(elem, {
+      shouldSort: false
+    });
 
     {{ if .AutoSubmit }}
     function debounce(func, timeout){
