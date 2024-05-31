@@ -5,7 +5,7 @@ import (
 )
 
 func IsBetween(target, start, end time.Time) bool {
-	return target.After(start.Add(-time.Minute)) && target.Before(end)
+	return target.After(start) && target.Before(end)
 }
 
 func DaysBetween(start, end time.Time) []time.Time {
