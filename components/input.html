@@ -12,7 +12,7 @@
 {{ end }}
 
 {{ $id := uniq }}
-<div class="flex flex-col gap-2">
+<div class="flex flex-col {{ if or .HelpText (and .Label (not .HideLabel)) }}gap-2{{ end }}">
   {{ if or .Label .HelpText }}
   <div class="flex gap-1">
 
