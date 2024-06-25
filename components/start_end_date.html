@@ -77,7 +77,7 @@
         const period = prevPeriod(start.value, end.value);
         start.value = period.start.toISODate();
         end.value = period.end.toISODate();
-        start.form.dispatchEvent(new CustomEvent('change'));
+        start.form.dispatchEvent(new CustomEvent('change', {bubbles: true}));
       });
     });
 
@@ -87,7 +87,7 @@
         const period = nextPeriod(start.value, end.value);
         start.value = period.start.toISODate();
         end.value = period.end.toISODate();
-        start.form.dispatchEvent(new CustomEvent('change'));
+        start.form.dispatchEvent(new CustomEvent('change', {bubbles: true}));
       });
     });
   })()

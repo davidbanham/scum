@@ -65,7 +65,7 @@
       self.classList.remove('hidden');
       let keylistener = document.addEventListener('keydown', (e) => {
         if (e.key == 'Escape') {
-          self.dispatchEvent(new CustomEvent('hide'));
+          self.dispatchEvent(new CustomEvent('hide', {bubbles: true}));
         }
       });
       let remover = self.addEventListener('hide', function() {
@@ -77,13 +77,13 @@
     const triggers = document.querySelectorAll('*[data-modaltrigger="{{.ID}}"]')
     Array.prototype.filter.call(triggers, function(el) {
       el.addEventListener('click', function() {
-        self.dispatchEvent(new CustomEvent('show'));
+        self.dispatchEvent(new CustomEvent('show', {bubbles: true}));
       });
     });
     const closers = document.querySelectorAll('*[data-modalcloser="{{.ID}}"]')
     Array.prototype.filter.call(closers, function(el) {
       el.addEventListener('click', function() {
-        self.dispatchEvent(new CustomEvent('hide'));
+        self.dispatchEvent(new CustomEvent('hide', {bubbles: true}));
       });
     });
 
