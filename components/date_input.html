@@ -4,7 +4,7 @@
   {{ if .Label }}
   <label
       for="{{$id}}"
-      class="sr-only block text-sm font-medium text-gray-700 {{if .HideLabel}}sr-only{{end}}">
+      class="block text-md font-medium text-gray-700 {{if .HideLabel}}sr-only{{end}}">
     {{.Label}}
   </label>
   {{ end }}
@@ -14,7 +14,7 @@
       type="date"
       {{if .Required}}required{{end}}
       {{if .Placeholder}}placeholder="{{.Placeholder}}"{{end}}
-      value="{{dateonly .Value.Format}}"
+      value="{{dateonly .Value}}"
       {{if .Autocomplete}}autocomplete="{{.Autocomplete}}"{{else}}autocomplete="off"{{end}}
       class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
 </div>
