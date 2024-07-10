@@ -12,6 +12,9 @@
       id="{{$id}}"
       name="{{.Name}}"
       type="date"
+      {{if .Min}}min="{{.Min}}"{{end}}
+      {{if .Max}}max="{{.Max}}"{{end}}
+      {{if .Form}}form="{{.Form}}"{{end}}
       {{if .Required}}required{{end}}
       {{if .Placeholder}}placeholder="{{.Placeholder}}"{{end}}
       value="{{dateonly .Value}}"
