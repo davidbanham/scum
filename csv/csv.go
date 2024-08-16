@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"time"
 )
 
 func CSVCols(model any) []string {
@@ -19,7 +20,9 @@ func CSVCols(model any) []string {
 				colName = field.Name
 			}
 			inter := elem.FieldByIndex(field.Index).Interface()
-			if field.Type.Kind() == reflect.Struct {
+			if field.Type.String() == "time.Time" {
+				ret = append(ret, colName)
+			} else if field.Type.Kind() == reflect.Struct {
 				subs := CSVCols(inter)
 				for _, sub := range subs {
 					ret = append(ret, fmt.Sprintf("%s.%s", colName, sub))
@@ -43,7 +46,9 @@ func CSVVals(model any) []string {
 				continue
 			}
 			inter := elem.FieldByIndex(field.Index).Interface()
-			if field.Type.Kind() == reflect.Struct {
+			if field.Type.String() == "time.Time" {
+				ret = append(ret, inter.(time.Time).Format(time.RFC3339))
+			} else if field.Type.Kind() == reflect.Struct {
 				ret = append(ret, CSVVals(inter)...)
 			} else {
 				var val string
