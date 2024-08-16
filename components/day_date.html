@@ -1,0 +1,12 @@
+{{ define "day_date" }}
+{{ $id := uniq }}
+<span title="{{isoTime .}}"id="{{$id}}">{{ humanDayDate . }}</span>
+  <script>
+    (function() {
+      const el = document.getElementById('{{$id}}');
+      const dt = luxon.DateTime.fromISO("{{ isoTime . }}");
+      el.innerText = dt.toFormat("DDDD");
+      el.title = dt.toFormat("fff");
+    })();
+  </script>
+{{ end }}

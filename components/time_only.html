@@ -1,11 +1,11 @@
-{{ define "time" }}
+{{ define "time_only" }}
 {{ $id := uniq }}
 <time datetime="{{isoTime .}}" id="{{$id}}">{{ humanTime . }}</time>
 <script>
   (function() {
     const el = document.getElementById('{{$id}}');
     const dt = luxon.DateTime.fromISO("{{ isoTime . }}");
-    el.innerText = dt.toFormat("dd LLL yy T");
+    el.innerText = dt.toFormat("t");
     el.title = dt.toFormat("ff ZZZZ");
   })();
 </script>
