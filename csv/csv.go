@@ -1,10 +1,13 @@
 package csv
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/davidbanham/scum/util"
 )
 
 func CSVCols(model any) []string {
@@ -22,6 +25,8 @@ func CSVCols(model any) []string {
 			inter := elem.FieldByIndex(field.Index).Interface()
 			if field.Type.String() == "time.Time" {
 				ret = append(ret, colName)
+			} else if field.Type.String() == "sql.NullString" {
+				ret = append(ret, field.Name)
 			} else if field.Type.Kind() == reflect.Struct {
 				subs := CSVCols(inter)
 				for _, sub := range subs {
@@ -46,15 +51,22 @@ func CSVVals(model any) []string {
 				continue
 			}
 			inter := elem.FieldByIndex(field.Index).Interface()
-			if field.Type.String() == "time.Time" {
-				ret = append(ret, inter.(time.Time).Format(time.RFC3339))
-			} else if field.Type.Kind() == reflect.Struct {
+			specialCaseStructs := []string{"time.Time", "sql.NullString"}
+			if field.Type.Kind() == reflect.Struct && !util.Contains(specialCaseStructs, field.Type.String()) {
 				ret = append(ret, CSVVals(inter)...)
 			} else {
 				var val string
 				switch v := inter.(type) {
 				default:
 					val = ""
+				case time.Time:
+					val = v.Format(time.RFC3339)
+				case sql.NullString:
+					if v.Valid {
+						val = v.String
+					} else {
+						val = "NULL"
+					}
 				case *CSVStringAble:
 					val = (*v).CSVString()
 				case CSVStringAble:
