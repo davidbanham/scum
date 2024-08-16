@@ -47,7 +47,7 @@
   </div>
   {{ if .Right }}
   <span class="ml-3 flex-grow flex gap-2">
-    <span id="{{$label}}" class="text-sm font-medium text-gray-900">{{$labelText}}</span>
+    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
     {{ if .HelpText }}
     {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
     {{ end }}
