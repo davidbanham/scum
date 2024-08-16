@@ -9,6 +9,7 @@
         autocomplete="off"
         id="{{$uniqID}}"
         name="{{.Name}}"
+        {{ if .Required}}required{{ end }}
         {{ if .Multiple }}multiple{{ end }}>
       <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select {{.Title}}{{end}}</option>
       {{ if (and $.Multiple $.SelectedIDs) }}
