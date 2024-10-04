@@ -4,6 +4,8 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+
+	"github.com/davidbanham/scum/util"
 )
 
 type Toggles []Toggle
@@ -79,7 +81,7 @@ func (this Toggles) Categories() []string {
 	for _, toggle := range this.List() {
 		ret = append(ret, toggle.Category)
 	}
-	return ret
+	return util.Uniq(ret)
 }
 
 func (this Toggles) Value() (driver.Value, error) {
