@@ -67,7 +67,13 @@ var FuncMap = template.FuncMap{
 			if !ok {
 				return nil, errors.New("dict keys must be strings")
 			}
-			dict[key] = values[i+1]
+			if key == "BaseDict" {
+				for k, v := range values[i+1].(map[string]interface{}) {
+					dict[k] = v
+				}
+			} else {
+				dict[key] = values[i+1]
+			}
 		}
 		return dict, nil
 	},
