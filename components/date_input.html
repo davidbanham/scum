@@ -16,9 +16,9 @@
       {{if .Max}}max="{{.Max}}"{{end}}
       {{if .Form}}form="{{.Form}}"{{end}}
       {{if .Required}}required{{end}}
-      {{if .Placeholder}}placeholder="{{.Placeholder}}"{{end}}
+      placeholder="{{.Placeholder}}"
       value="{{dateonly .Value}}"
       {{if .Autocomplete}}autocomplete="{{.Autocomplete}}"{{else}}autocomplete="off"{{end}}
-      class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 invalid:border-red-600 rounded-md">
+      class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 invalid:border-red-600 placeholder-shown:invalid:border-gray-300 rounded-md">
 </div>
 {{ end }}
