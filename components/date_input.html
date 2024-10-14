@@ -1,9 +1,5 @@
 {{ define "date_input" }}
 
-{{ if .Value }}
-{{ template "input" dict "BaseDict" . "Type" "date" "Value" (dateonly .Value) }}
-{{ else }}
 {{ template "input" dict "BaseDict" . "Type" "date" }}
-{{ end }}
 
 {{ end }}
