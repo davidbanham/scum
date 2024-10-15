@@ -1,11 +1,13 @@
 {{ define "list-item" }}
 <li>
   <a href="{{.URI}}" class="block hover:bg-gray-50">
-    <div class="px-4 py-4 sm:px-6 flex items-center justify-between">
-      <div class="truncate">
+    <div class="px-4 py-4 sm:px-6 flex gap-24 items-center justify-between">
+      <div class="min-w-fit truncate">
         {{.Label}}
       </div>
-      {{ .Secondary }}
+      <div class="truncate">
+        {{ .Secondary }}
+      </div>
     </div>
   </a>
 </li>
