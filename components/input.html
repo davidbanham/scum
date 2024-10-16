@@ -35,6 +35,7 @@
         name="{{.Name}}"
         type="{{.Type}}"
         {{if .Autofocus}}autofocus{{end}}
+        {{if .Form}}form="{{.Form}}"{{end}}
         {{if .Step}}step="{{.Step}}"{{end}}
         {{if .Min}}min="{{.Min}}"{{end}}
         {{if .Max}}max="{{.Max}}"{{end}}
