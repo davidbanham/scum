@@ -150,6 +150,26 @@ func (filters Filters) Active(id string) bool {
 	return false
 }
 
+func (filters Filters) Except(except ...string) Filters {
+	ret := Filters{}
+	for _, f := range filters {
+		if !util.Contains(except, f.ID()) {
+			ret = append(ret, f)
+		}
+	}
+	return ret
+}
+
+func (filters Filters) Only(except ...string) Filters {
+	ret := Filters{}
+	for _, f := range filters {
+		if util.Contains(except, f.ID()) {
+			ret = append(ret, f)
+		}
+	}
+	return ret
+}
+
 func (filters Filters) IDMap() map[string]Filter {
 	ret := map[string]Filter{}
 	for _, filter := range filters {
