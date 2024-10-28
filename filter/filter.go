@@ -141,6 +141,15 @@ func (filters Filters) ByID(id string) Filter {
 	return &invalidFilter{}
 }
 
+func (filters Filters) Active(id string) bool {
+	for _, filter := range filters {
+		if filter.ID() == id {
+			return true
+		}
+	}
+	return false
+}
+
 func (filters Filters) IDMap() map[string]Filter {
 	ret := map[string]Filter{}
 	for _, filter := range filters {
