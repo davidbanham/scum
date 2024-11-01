@@ -67,6 +67,12 @@ func CSVVals(model any) []string {
 					} else {
 						val = "NULL"
 					}
+				case sql.NullTime:
+					if v.Valid {
+						val = v.Time.Format(time.RFC3339)
+					} else {
+						val = "NULL"
+					}
 				case *CSVStringAble:
 					val = (*v).CSVString()
 				case CSVStringAble:
