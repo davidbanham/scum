@@ -51,7 +51,7 @@ func CSVVals(model any) []string {
 				continue
 			}
 			inter := elem.FieldByIndex(field.Index).Interface()
-			specialCaseStructs := []string{"time.Time", "sql.NullString"}
+			specialCaseStructs := []string{"time.Time", "sql.NullString", "sql.NullTime"}
 			if field.Type.Kind() == reflect.Struct && !util.Contains(specialCaseStructs, field.Type.String()) {
 				ret = append(ret, CSVVals(inter)...)
 			} else {
