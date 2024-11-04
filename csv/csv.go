@@ -25,7 +25,7 @@ func CSVCols(model any) []string {
 			inter := elem.FieldByIndex(field.Index).Interface()
 			if field.Type.String() == "time.Time" {
 				ret = append(ret, colName)
-			} else if field.Type.String() == "sql.NullString" {
+			} else if field.Type.String() == "sql.NullString" || field.Type.String() == "sql.NullTime" {
 				ret = append(ret, field.Name)
 			} else if field.Type.Kind() == reflect.Struct {
 				subs := CSVCols(inter)
