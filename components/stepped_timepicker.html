@@ -12,7 +12,14 @@
     {{.Label}}
   </label>
   {{ end }}
-  <input autocomplete="off" type="hidden" id="{{$uniq}}-real" name="{{.Name}}" value="{{$pickedTime.Format "15:04"}}">
+  <input
+      autocomplete="off"
+      type="hidden"
+      id="{{$uniq}}-real"
+      name="{{.Name}}"
+      value="{{$pickedTime.Format "15:04"}}"
+      {{if .Form}}form="{{.Form}}"{{end}}
+      >
 
   <div class="grid grid-cols-2 gap-1">
     <select aria-label="hour"
