@@ -20,7 +20,9 @@
   </div>
   {{ end }}
 </div>
-<textarea rows="4" name="{{.Name}}" id="{{$id}}" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md">{{.Content}}</textarea>
+{{ $autocomplete := .AutoComplete }}
+{{ if (eq $autocomplete "") }} {{ $autocomplete = "off"}} {{ end }}
+<textarea rows="4" name="{{.Name}}" id="{{$id}}" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md" autocomplete="{{$autocomplete}}">{{.Content}}</textarea>
 <script>
   (function() {
     new MediumEditor('#{{$id}}', {
