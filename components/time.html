@@ -1,12 +1,13 @@
 {{ define "time" }}
-{{ $id := uniq }}
-<time datetime="{{isoTime .}}" id="{{$id}}">{{ humanTime . }}</time>
-<script>
-  (function() {
-    const el = document.getElementById('{{$id}}');
-    const dt = luxon.DateTime.fromISO("{{ isoTime . }}");
-    el.innerText = dt.toFormat("dd LLL yy T");
-    el.title = dt.toFormat("ff ZZZZ");
-  })();
-</script>
+<time datetime="{{isoTime .}}">
+  {{ humanTime . }}
+  <script>
+    (function() {
+      const el = document.currentScript.parentElement;
+      const dt = luxon.DateTime.fromISO("{{ isoTime . }}");
+      el.innerText = dt.toFormat("dd LLL yy T");
+      el.title = dt.toFormat("ff ZZZZ");
+    })();
+  </script>
+</time>
 {{ end }}
