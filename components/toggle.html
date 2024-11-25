@@ -21,9 +21,14 @@
 <div id="{{$container}}" class="flex {{ if .Vertical }}flex-col{{ end }} gap-2 items-center justify-between">
   {{ if not .Right }}
   <span class="flex-grow flex gap-2">
-    <span id="{{$label}}" class="{{ if .Vertical }}text-center{{ end }} text-sm font-medium text-gray-900">{{$labelText}}</span>
-    {{ if .HelpText }}
-    {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+    <span id="{{$label}}" class="{{ if .Vertical }}text-center{{ end }} text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
+    <div data-notoggle="true">
+      {{ if .HelpText }}
+      {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+      {{ end }}
+    </div>
+    {{ if and (not .Vertical) (not .NoSpinner) }}
+    <div class="ml-1 h-4">{{ template "spinny" }}</div>
     {{ end }}
   </span>
   {{ end }}
@@ -45,11 +50,19 @@
     </div>
     {{ end }}
   </div>
+  {{ if and (.Vertical) (not .NoSpinner) }}
+  <div class="ml-1 h-4">{{ template "spinny" }}</div>
+  {{ end }}
   {{ if .Right }}
   <span class="ml-3 flex-grow flex gap-2">
     <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
-    {{ if .HelpText }}
-    {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+    <div data-notoggle="true">
+      {{ if .HelpText }}
+      {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+      {{ end }}
+    </div>
+    {{ if not .NoSpinner }}
+    <div class="ml-1 h-4">{{ template "spinny" }}</div>
     {{ end }}
   </span>
   {{ end }}
@@ -64,10 +77,12 @@
          {{ if .Disabled }} disabled {{ end }}
          {{ if .Form }} form="{{.Form}}" {{ end }}>
 
-  <div class="ml-1 h-4">{{ template "spinny" }}</div>
   {{ if not .Disabled }}
   <script>
     document.getElementById("{{$container}}").addEventListener("click", function(e) {
+      if (e.target.closest('*[data-notoggle="true"]')) {
+        return
+      }
       const outer = document.getElementById("{{$outer}}")
       outer.classList.toggle("{{$selectedClass}}");
       outer.classList.toggle("bg-gray-200");
