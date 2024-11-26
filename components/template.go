@@ -12,6 +12,7 @@ import (
 	"github.com/davidbanham/heroicons"
 	"github.com/davidbanham/scum/util"
 	"github.com/gomarkdown/markdown"
+	mdhtml "github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
 	uuid "github.com/satori/go.uuid"
@@ -21,6 +22,8 @@ import (
 var FS embed.FS
 
 var heroIcons heroicons.Icons
+
+var mdRenderer markdown.Renderer
 
 var FuncMap = template.FuncMap{
 	"uniq": func() string {
@@ -115,7 +118,14 @@ var FuncMap = template.FuncMap{
 		p := parser.NewWithExtensions(extensions)
 		md := []byte(str)
 		md = markdown.NormalizeNewlines(md)
-		output := markdown.ToHTML(md, p, nil)
+		if mdRenderer == nil {
+			opts := mdhtml.RendererOptions{
+				Flags: mdhtml.Smartypants | mdhtml.SmartypantsDashes | mdhtml.SmartypantsLatexDashes,
+			}
+			mdRenderer = mdhtml.NewRenderer(opts)
+		}
+		output := markdown.ToHTML(md, p, mdRenderer)
+
 		return template.HTML(bluemonday.UGCPolicy().Sanitize(string(output)))
 	},
 }
