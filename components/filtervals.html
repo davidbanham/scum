@@ -1,0 +1,32 @@
+{{ define "filtervals" }}
+<div class="w-full">
+  <select autocomplete="off" autocomplete="off" name="filter" multiple>
+    <option value="">Apply Filters</option>
+
+    {{ range .Entity.Criteria.Filters }}
+    <option value="{{.ID}}" selected>{{.Label}}</option>
+    {{ end }}
+
+    {{ range .Entity.AvailableFilters }}
+    {{ if not ($.Entity.Criteria.Filters.ByID .ID).ID}}
+    <option value="{{.ID}}">{{.Label}}</option>
+    {{ end }}
+    {{ end }}
+  </select>
+</div>
+{{ range $.Entity.Criteria.Filters }}
+{{ $filter := . }}
+{{ range .Inputs }}
+{{ if eq . "start_end_date" }}
+<div class="-mx-2 sm:px-5" data-parentfilter="{{$filter.ID}}">
+  {{ template "start_end_date" dict "Period" $filter.Period "Prefix" (print $filter.ID "-") "Label" $filter.Label }}
+</div>
+{{ else if eq . "hidden" }}
+{{ range $filter.InputValues }}
+<input type="hidden" data-parentfilter="{{$filter.ID}}" name="{{$filter.ID}}" value="{{.}}">
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ end }}
