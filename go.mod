@@ -5,7 +5,7 @@ go 1.21.3
 require (
 	github.com/davidbanham/heroicons v0.0.6
 	github.com/davidbanham/human_duration v1.4.0
-	github.com/davidbanham/kewpie_go/v3 v3.4.0
+	github.com/davidbanham/kewpie_go/v3 v3.4.1
 	github.com/davidbanham/marcel v0.0.15
 	github.com/gomarkdown/markdown v0.0.0-20240729212818-a2a9c4f76ef5
 	github.com/iancoleman/strcase v0.3.0
@@ -25,7 +25,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidbanham/required_env v0.0.0-20150902120453-a84628a4c244 // indirect
 	github.com/go-ini/ini v1.33.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.1.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/google/go-cmp v0.4.0 // indirect
