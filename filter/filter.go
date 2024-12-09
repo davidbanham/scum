@@ -76,7 +76,7 @@ type dateBase struct {
 }
 
 func (this dateBase) Query(propIndex int) (string, []any) {
-	return fmt.Sprintf("DATE_TRUNC('day', %s.%s) BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{this.period.Start, this.period.End}
+	return fmt.Sprintf("%s.%s BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{this.period.Start, this.period.End}
 }
 
 func (this dateBase) Inputs() []string {
@@ -105,27 +105,38 @@ func (this *dateBase) Populate(prefix string, form url.Values) error {
 	start := form.Get(prefix + "-start")
 	end := form.Get(prefix + "-end")
 	tz := form.Get(prefix + "-tz")
+	var loc *time.Location
+	if tz != "" {
+		loc, _ = time.LoadLocation(tz)
+	}
 	if start == "" || end == "" {
 		return nil
 	}
-	s, err := time.Parse("2006-01-02", start)
-	if err != nil {
-		return err
-	}
-	e, err := time.Parse("2006-01-02", end)
-	if err != nil {
-		return err
-	}
-	p := this.period
-	p.Start = s
-	p.End = e
-	this.period = p
-	if tz != "" {
-		loc, _ := time.LoadLocation(tz)
-		if loc != nil {
-			p.Start = p.Start.In(loc)
-			p.End = p.End.In(loc)
+	if loc != nil {
+		s, err := time.ParseInLocation("2006-01-02", start, loc)
+		if err != nil {
+			return err
 		}
+		e, err := time.ParseInLocation("2006-01-02", end, loc)
+		if err != nil {
+			return err
+		}
+		this.period.Start = s
+		this.period.End = e
+	} else {
+		s, err := time.Parse("2006-01-02", start)
+		if err != nil {
+			return err
+		}
+		e, err := time.Parse("2006-01-02", end)
+		if err != nil {
+			return err
+		}
+		this.period.Start = s
+		this.period.End = e
+	}
+	if this.period.End == this.period.Start {
+		this.period.End = this.period.End.AddDate(0, 0, 1)
 	}
 	return nil
 }
