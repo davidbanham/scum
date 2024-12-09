@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
+	"net/url"
 	"time"
 )
 
@@ -49,7 +50,10 @@ func CheckToken(secret, expiry, input, token string) error {
 	encHash := hash.Sum([]byte(plaintext))
 	target := base64.StdEncoding.EncodeToString(encHash)
 	if token != target {
-		return ErrorTokenInvalid
+		unescaped, err := url.QueryUnescape(token)
+		if err != nil || target != unescaped {
+			return ErrorTokenInvalid
+		}
 	}
 	return nil
 }
