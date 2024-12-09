@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -25,8 +24,8 @@ func (this Token) ExpiryString() string {
 	return this.expiry.UTC().Format(time.RFC3339)
 }
 
-var ErrorTokenExpired = fmt.Errorf("Token expired")
-var ErrorTokenInvalid = fmt.Errorf("Token invalid")
+var ErrorTokenExpired = ClientSafeError{Message: "Token expired"}
+var ErrorTokenInvalid = ClientSafeError{Message: "Token invalid"}
 
 func checkTokenExpiry(expiry string) error {
 	parsed, err := time.Parse(time.RFC3339, expiry)
