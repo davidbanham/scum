@@ -343,10 +343,31 @@ func NotificationStatusForUser(ctx context.Context, userID string) (Notification
 	db := ctx.Value("tx").(scummodel.Querier)
 	var warn, success, info int
 	err := db.QueryRowContext(ctx, `SELECT 
-	COUNT(*) FILTER(WHERE nlevel = '1') AS warnings, 
-	COUNT(*) FILTER(WHERE nlevel = '2') AS success, 
+	COUNT(*) FILTER(WHERE nlevel = '1') AS warnings,
+	COUNT(*) FILTER(WHERE nlevel = '2') AS success,
 	COUNT(*) FILTER(WHERE nlevel = '3') AS info
 	FROM notifications WHERE user_id = $1 AND seen = false`, userID).Scan(&warn, &success, &info)
+	stats := NotificationStatus{
+		NoUnread:    warn+success+info == 0,
+		Num:         warn + success + info,
+		NumWarnings: warn,
+		NumSuccess:  success,
+		NumInfo:     info,
+		AnyWarnings: warn > 0,
+		AnySuccess:  success > 0,
+		AnyInfo:     info > 0,
+	}
+	return stats, err
+}
+
+func NotificationStatusForUserInOrg(ctx context.Context, userID, orgID string) (NotificationStatus, error) {
+	db := ctx.Value("tx").(scummodel.Querier)
+	var warn, success, info int
+	err := db.QueryRowContext(ctx, `SELECT 
+	COUNT(*) FILTER(WHERE nlevel = '1') AS warnings,
+	COUNT(*) FILTER(WHERE nlevel = '2') AS success,
+	COUNT(*) FILTER(WHERE nlevel = '3') AS info
+	FROM notifications WHERE user_id = $1 AND organisation_id = $2 AND seen = false`, userID, orgID).Scan(&warn, &success, &info)
 	stats := NotificationStatus{
 		NoUnread:    warn+success+info == 0,
 		Num:         warn + success + info,
