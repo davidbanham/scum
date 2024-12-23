@@ -10,7 +10,7 @@
     </svg>
   </button>
 </div>
-<div id="slide-panel" class="text-sm min-w-1/4 shrink-0 bg-white absolute right-0 shadow-lg rounded-bl-md transition-transform duration-100 ease-in-out translate-x-full lg:pr-4 lg:left-0 lg:relative lg:shadow-none lg:translate-x-0">
+<div id="slide-panel" class="text-sm min-w-1/4 shrink-0 bg-white absolute right-0 shadow-lg rounded-bl-md transition-transform duration-100 ease-in-out hidden lg:block translate-x-full lg:pr-4 lg:left-0 lg:relative lg:shadow-none lg:translate-x-0">
   <div class="float-right h-14 hidden" id="slide-panel-closer">
     <button
         type="button"
@@ -35,11 +35,13 @@
 
     panelOpen.addEventListener('click', function() {
       panelOpen.classList.add('hidden');
+      panel.classList.remove('hidden');
       panel.classList.remove('translate-x-full');
       panelClose.classList.remove('hidden');
     });
     panelClose.addEventListener('click', function() {
       panelOpen.classList.remove('hidden');
+      panel.classList.add('hidden');
       panel.classList.add('translate-x-full');
       panelClose.classList.add('hidden');
     });
