@@ -156,6 +156,10 @@ func (this Notification) Label() string {
 }
 
 func (this Notification) Ago() string {
+	ago := time.Now().Sub(this.CreatedAt)
+	if ago < time.Minute {
+		return "just now"
+	}
 	return human_duration.String(time.Now().Sub(this.CreatedAt), "minute") + " ago"
 }
 
