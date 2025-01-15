@@ -146,7 +146,7 @@ type Querier interface {
 	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 }
 
-var ErrWrongRev = util.ClientSafeError{Message: "This record has been changed by another request since you loaded it. Review the changes by going back and refreshing, and try again if appropriate."}
+var ErrWrongRev = util.ClientSafeError{Message: "This record has been changed by another request since you loaded it. Review the changes by refreshing, and then re-submit your modification if appropriate."}
 
 type ErrInvalidQuery struct {
 	Query interface{}
