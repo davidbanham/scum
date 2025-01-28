@@ -3,7 +3,7 @@ module github.com/davidbanham/scum
 go 1.21.3
 
 require (
-	github.com/davidbanham/heroicons v0.0.6
+	github.com/davidbanham/heroicons v0.0.8
 	github.com/davidbanham/human_duration v1.4.0
 	github.com/davidbanham/kewpie_go/v3 v3.4.1
 	github.com/davidbanham/marcel v0.0.15
