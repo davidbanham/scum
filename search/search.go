@@ -105,7 +105,7 @@ type ByPhrase struct {
 	props          []any
 }
 
-func (this ByPhrase) Construct(entities Searchables, filters filter.Filters, pagination pagination.Pagination) string {
+func (this *ByPhrase) Construct(entities Searchables, filters filter.Filters, pagination pagination.Pagination) string {
 	parts := []string{}
 
 	filterQuery, filterProps := filters.Query(3)
