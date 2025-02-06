@@ -1,8 +1,8 @@
 {{ define "list-item" }}
 <li>
-  <a href="{{.URI}}" class="block hover:bg-gray-50">
-    <div class="px-4 py-4 sm:px-6 flex gap-24 items-center justify-between">
-      <div class="min-w-fit truncate">
+  <a href="{{.URI}}" class="block hover:bg-gray-50 ">
+    <div class="px-4 py-4 sm:px-6 flex gap-24 items-center justify-between line-clamp-1">
+      <div class="min-w-fit">
         {{.Label}}
       </div>
       <div class="h-6 overflow-clip text-right">
