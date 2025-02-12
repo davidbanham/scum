@@ -39,6 +39,7 @@
         {{if .Step}}step="{{.Step}}"{{end}}
         {{if (or .Min (eq .Min 0))}}min="{{.Min}}"{{end}}
         {{if .Max}}max="{{.Max}}"{{end}}
+        {{if .MaxLength}}maxlength="{{.MaxLength}}"{{end}}
         {{if .Required}}required{{end}}
         {{if .Disabled}}disabled{{end}}
         {{if .Placeholder}}placeholder="{{.Placeholder}}"{{end}}
