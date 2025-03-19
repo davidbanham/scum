@@ -5,7 +5,7 @@
 {{ if eq .Type "date" }}
 {{ $value = dateonly .Value }}
 {{ else if eq .Type "datetime-local" }}
-{{ $value = (.Value.Format "2006-01-02T15:04") }}
+{{ if not .Value.IsZero }} {{ $value = (.Value.Format "2006-01-02T15:04") }} {{ end }}
 {{ else if eq .Type "time" }}
 {{ $value = timeonly .Value }}
 {{ end }}
