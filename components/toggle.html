@@ -1,8 +1,4 @@
 {{ define "toggle" }}
-{{ $container := uniq }}
-{{ $outer := uniq }}
-{{ $inner := uniq }}
-{{ $input := uniq }}
 {{ $label := uniq }}
 {{ $selectedClass := "bg-indigo-600" }}
 {{ if .SelectedClass }}
@@ -18,10 +14,10 @@
 {{ end }}
 {{ end }}
 
-<div id="{{$container}}" class="flex {{ if .Vertical }}flex-col{{ end }} gap-2 items-center justify-between">
+<div data-togglerole="container" class="flex {{ if .Vertical }}flex-col{{ end }} gap-2 items-center justify-between">
   {{ if not .Right }}
   <span class="flex-grow flex gap-2">
-    <span id="{{$label}}" class="{{ if .Vertical }}text-center{{ end }} text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
+    <span data-togglerole="label" id="{{$label}}" class="{{ if .Vertical }}text-center{{ end }} text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
     <div data-notoggle="true">
       {{ if .HelpText }}
       {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
@@ -35,12 +31,12 @@
   <div class="relative h-6">
     <button
         aria-labelledby="{{$label}}"
-        id="{{$outer}}"
+        data-togglerole="outer"
         type="button"
         role="switch"
         aria-checked="false"
         class="{{ if .Selected }} {{$selectedClass}} {{ else }} bg-gray-200 {{ end }} relative inline-flex flex-shrink-0 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-      <span id="{{$inner}}"
+      <span data-togglerole="inner"
             aria-hidden="true"
             class="{{ if .Selected }} translate-x-5 {{ else }} translate-x-0 {{ end }} pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200">
       </span>
@@ -55,7 +51,7 @@
   {{ end }}
   {{ if .Right }}
   <span class="ml-3 flex-grow flex gap-2">
-    <span id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
+    <span data-togglerole="label" id="{{$label}}" class="text-sm font-medium text-gray-900 {{if .HideLabel}}sr-only{{end}}">{{$labelText}}</span>
     <div data-notoggle="true">
       {{ if .HelpText }}
       {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
@@ -66,8 +62,7 @@
     {{ end }}
   </span>
   {{ end }}
-  <input id="{{$input}}"
-         autocomplete="off"
+  <input autocomplete="off"
          class="hidden"
          hidden
          name="{{.Key}}"
@@ -79,41 +74,53 @@
 
   {{ if not .Disabled }}
   <script>
-    document.getElementById("{{$container}}").addEventListener("click", function(e) {
-      if (e.target.closest('*[data-notoggle="true"]')) {
-        return
-      }
-      const outer = document.getElementById("{{$outer}}")
-      outer.classList.toggle("{{$selectedClass}}");
-      outer.classList.toggle("bg-gray-200");
-      const inner = document.getElementById("{{$inner}}")
-      inner.classList.toggle("translate-x-5");
-      inner.classList.toggle("translate-x-0");
-      const input = document.getElementById("{{$input}}")
-      input.checked = !input.checked;
+    (function() {
+      const container = document.currentScript.closest('div[data-togglerole="container"]');
+      container.addEventListener('change', function(e) {
+        const input = container.querySelector('input');
 
-      {{ if (or .YesLabel .NoLabel) }}
-      let newLabel = ""
-      if (input.checked) {
-        newLabel = "{{.YesLabel}}"
-      } else {
-        newLabel = "{{.NoLabel}}"
-      }
-      document.getElementById('{{$label}}').innerText = newLabel;
-      {{ end }}
+        const outer = container.querySelector('*[data-togglerole="outer"]');
+        const inner = container.querySelector('*[data-togglerole="inner"]');
 
-      {{ if .Anchor }}
-      const elem = input.form.querySelector("[name=next_fragment]")
-      if (elem) {
-        elem.value = "{{.Anchor}}"
-      }
-      {{ end }}
-      {{ if .AutoSubmit }}
-      input.form.requestSubmit()
-      {{ else }}
-      input.dispatchEvent(new CustomEvent('change', {bubbles: true}));
-      {{ end }}
-    });
+        if (input.checked) {
+          {{ if (or .YesLabel .NoLabel) }}
+          container.querySelector('*[data-togglerole="label"]').innerText = '{{.YesLabel}}';
+          {{ end }}
+          outer.classList.add("{{$selectedClass}}");
+          outer.classList.remove("bg-gray-200");
+          inner.classList.add("translate-x-5");
+          inner.classList.remove("translate-x-0");
+        } else {
+          {{ if (or .YesLabel .NoLabel) }}
+          container.querySelector('*[data-togglerole="label"]').innerText = '{{.NoLabel}}';
+          {{ end }}
+          outer.classList.remove("{{$selectedClass}}");
+          outer.classList.add("bg-gray-200");
+          inner.classList.remove("translate-x-5");
+          inner.classList.add("translate-x-0");
+        }
+
+        {{ if .Anchor }}
+        const elem = input.form.querySelector("[name=next_fragment]")
+        if (elem) {
+          elem.value = "{{.Anchor}}"
+        }
+        {{ end }}
+        {{ if .AutoSubmit }}
+        input.form.requestSubmit()
+        {{ else }}
+        input.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+        {{ end }}
+      });
+      container.addEventListener('click', function(e) {
+        if (e.target.closest('*[data-notoggle="true"]')) {
+          return
+        } else {
+          const input = container.querySelector('input');
+          input.checked = !input.checked;
+        }
+      });
+    })();
   </script>
   {{ end }}
 </div>
