@@ -24,6 +24,8 @@ var FS embed.FS
 var heroIcons heroicons.Icons
 
 var mdRenderer markdown.Renderer
+var markdownSanitiser *bluemonday.Policy
+var strictSanitiser *bluemonday.Policy
 
 var FuncMap = template.FuncMap{
 	"uniq": func() string {
@@ -81,7 +83,10 @@ var FuncMap = template.FuncMap{
 		return dict, nil
 	},
 	"noescape": func(str string) template.HTML {
-		return template.HTML(bluemonday.UGCPolicy().Sanitize(str))
+		if strictSanitiser == nil {
+			strictSanitiser = bluemonday.UGCPolicy()
+		}
+		return template.HTML(strictSanitiser.Sanitize(str))
 	},
 	"queryString": func(vals url.Values) template.URL {
 		return "?" + template.URL(vals.Encode())
@@ -126,7 +131,11 @@ var FuncMap = template.FuncMap{
 		}
 		output := markdown.ToHTML(md, p, mdRenderer)
 
-		return template.HTML(bluemonday.UGCPolicy().Sanitize(string(output)))
+		if markdownSanitiser == nil {
+			markdownSanitiser = bluemonday.UGCPolicy().AddTargetBlankToFullyQualifiedLinks(true)
+		}
+
+		return template.HTML(markdownSanitiser.Sanitize(string(output)))
 	},
 }
 
