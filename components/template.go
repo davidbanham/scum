@@ -119,21 +119,21 @@ var FuncMap = template.FuncMap{
 	},
 	"contains": util.Contains,
 	"markdown": func(str string) template.HTML {
-		extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
-		p := parser.NewWithExtensions(extensions)
-		md := []byte(str)
-		md = markdown.NormalizeNewlines(md)
+		mdParser := parser.NewWithExtensions(parser.CommonExtensions | parser.NoEmptyLineBeforeBlock)
 		if mdRenderer == nil {
-			opts := mdhtml.RendererOptions{
+			mdRenderer = mdhtml.NewRenderer(mdhtml.RendererOptions{
 				Flags: mdhtml.Smartypants | mdhtml.SmartypantsDashes | mdhtml.SmartypantsLatexDashes,
-			}
-			mdRenderer = mdhtml.NewRenderer(opts)
+			})
 		}
-		output := markdown.ToHTML(md, p, mdRenderer)
-
 		if markdownSanitiser == nil {
 			markdownSanitiser = bluemonday.UGCPolicy().AddTargetBlankToFullyQualifiedLinks(true)
 		}
+
+		output := markdown.ToHTML(
+			markdown.NormalizeNewlines([]byte(str)),
+			mdParser,
+			mdRenderer,
+		)
 
 		return template.HTML(markdownSanitiser.Sanitize(string(output)))
 	},
