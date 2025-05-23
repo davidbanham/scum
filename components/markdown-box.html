@@ -2,8 +2,15 @@
 {{ if eq .Editable false }}
 
 {{$id := selectorSafe (print .Name "-" uniq) }}
-{{ if .Label }}
-<label for="{{$id}}" class="mt-1 text-md text-gray-600">{{.Label}}</label>
+{{ if or .Label .HelpText }}
+<div class="flex gap-1 justify-between items-center">
+  {{ if .Label }}
+  <label for="{{$id}}" class="mt-1 text-md text-gray-600">{{.Label}}</label>
+  {{ end }}
+  {{ if .HelpText }}
+  {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+  {{ end }}
+</div>
 {{ end }}
 <div class="prose text-md text-gray-600">{{markdown .Content}}</div>
 <input type="hidden" name="{{.Name}}" id="{{$id}}" value="{{.Content}}">
@@ -11,8 +18,17 @@
 {{ else }}
 
 {{$id := selectorSafe (print "editable-" .Name "-" uniq) }}
-<label for="{{$id}}" class="pb-2 text-sm font-medium text-gray-700">{{.Label}}</label>
-<textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="{{if .Rows}}{{.Rows}}{{else}}4{{end}}" name="{{.Name}}" id="{{$id}}" class="markdown-editor p-2 focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">{{.Content}}</textarea>
+{{ if or .Label .HelpText }}
+<div class="flex gap-1 justify-between items-center">
+  {{ if .Label }}
+  <label for="{{$id}}" class="pb-2 text-sm font-medium text-gray-700">{{.Label}}</label>
+  {{ end }}
+  {{ if .HelpText }}
+  {{ template "feature_help" dict "Title" .Label "Text" .HelpText }}
+  {{ end }}
+</div>
+{{ end }}
+<textarea {{ if .FormID }} form="{{.FormID}}" {{ end }} rows="{{if .Rows}}{{.Rows}}{{else}}4{{end}}" name="{{.Name}}" id="{{$id}}" class="markdown-editor p-2 focus:ring-blue-500 focus:border-blue-500 block w-full border-gray-300 rounded-md">{{.Content}}</textarea>
 
 {{ if .RichInput }}
 <!-- SimpleMDE -->
