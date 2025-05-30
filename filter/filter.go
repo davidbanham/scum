@@ -16,6 +16,7 @@ type Filter interface {
 	Populate(url.Values) error
 	Inputs() []string
 	TableName() string
+	InputValues() []string
 }
 
 type DateFilterOpts struct {
@@ -225,6 +226,14 @@ func (filters *Filters) FromForm(form url.Values, availableFilters Filters, cust
 	}
 	(*filters) = append((*filters), activeFilters...)
 	return nil
+}
+
+func (this Filters) Values() url.Values {
+	ret := url.Values{}
+	for _, filter := range this {
+		ret[filter.ID()] = append(ret[filter.ID()], filter.InputValues()...)
+	}
+	return ret
 }
 
 type invalidFilter struct {
