@@ -55,6 +55,9 @@ func TestRolesCan(t *testing.T) {
 	pinchhitter := Roles{}
 	pinchhitter = append(pinchhitter, allEmployeeRole, teamLeadRole)
 
+	newbie := Roles{}
+	newbie = append(newbie, employeeRole)
+
 	phantomProjectID := uuid.NewV4().String()
 
 	assert.True(t, admin.CanOver(teamLeadRole.Name, phantomProjectID))
@@ -67,4 +70,12 @@ func TestRolesCan(t *testing.T) {
 	assert.True(t, teamleader.Can(employeeRole.Name))
 	assert.True(t, teamleader.CanOver(teamLeadRole.Name, projectID))
 	assert.False(t, pinchhitter.CanOver(teamLeadRole.Name, phantomProjectID))
+	assert.True(t, newbie.CanOnly(employeeRole.Name))
+	assert.False(t, newbie.CanOnly(employeeRole.Name, teamLeadRole.Name))
+	assert.False(t, admin.CanOnly(employeeRole.Name, teamLeadRole.Name))
+	assert.False(t, teamleader.CanOnly(employeeRole.Name, teamLeadRole.Name))
+	assert.True(t, teamleader.CanOnly(teamLeadRole.Name))
+	assert.True(t, pinchhitter.CanOnly(employeeRole.Name, teamLeadRole.Name))
+	assert.False(t, pinchhitter.CanOnly(employeeRole.Name))
+	assert.False(t, pinchhitter.CanOnly(teamLeadRole.Name))
 }

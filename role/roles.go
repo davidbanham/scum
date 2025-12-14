@@ -47,11 +47,23 @@ func (roles Roles) Can(name string) bool {
 	return false
 }
 
-func (roles Roles) CanOnly(name string) bool {
-	if len(roles) == 1 && roles[0].Name == name && roles.Can(name) {
-		return true
+func (roles Roles) CanOnly(names ...string) bool {
+	if len(roles) != len(names) {
+		return false
 	}
-	return false
+	checked := map[string]bool{}
+	for _, name := range names {
+		if !roles.Can(name) {
+			return false
+		}
+		checked[name] = true
+	}
+	for _, role := range roles {
+		if !checked[role.Name] {
+			return false
+		}
+	}
+	return true
 }
 
 func (roles Roles) CanOver(name string, entityID string) bool {
