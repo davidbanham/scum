@@ -20,11 +20,12 @@ type Filter interface {
 }
 
 type DateFilterOpts struct {
-	Label  string
-	ID     string
-	Table  string
-	Col    string
-	Period util.Period
+	Label         string
+	ID            string
+	Table         string
+	Col           string
+	Period        util.Period
+	IncludeEndDay bool
 }
 
 type DateFilter struct {
@@ -70,14 +71,19 @@ var ErrorAlreadyHydrated = fmt.Errorf("Filter already hydrated. This is a once-o
 
 type dateBase struct {
 	filterBase
-	hydrated bool
-	table    string
-	col      string
-	period   util.Period
+	hydrated      bool
+	table         string
+	col           string
+	period        util.Period
+	includeEndDay bool
 }
 
 func (this dateBase) Query(propIndex int) (string, []any) {
-	return fmt.Sprintf("%s.%s BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{this.period.Start, this.period.End}
+	end := this.period.End
+	if this.includeEndDay {
+		end = this.period.End.AddDate(0, 0, 1)
+	}
+	return fmt.Sprintf("%s.%s BETWEEN $%d AND $%d", this.table, this.col, propIndex, propIndex+1), []any{this.period.Start, end}
 }
 
 func (this dateBase) Inputs() []string {
@@ -97,6 +103,7 @@ func (this *dateBase) Hydrate(opts DateFilterOpts) error {
 	this.table = opts.Table
 	this.col = opts.Col
 	this.period = opts.Period
+	this.includeEndDay = opts.IncludeEndDay
 	this.hydrated = true
 
 	return nil
