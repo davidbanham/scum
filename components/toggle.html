@@ -118,6 +118,11 @@
         } else {
           const input = container.querySelector('input');
           input.checked = !input.checked;
+          {{ if .AutoSubmit }}
+          input.form.requestSubmit()
+          {{ else }}
+          input.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+          {{ end }}
         }
       });
     })();
