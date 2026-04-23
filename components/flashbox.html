@@ -38,17 +38,37 @@
           </button>
           <script>
             (function() {
+              let deleted = false;
               document.getElementById('{{$id}}-destroyer').addEventListener('click', function() {
                 document.getElementById('{{$id}}').classList.add('hidden');
                 {{ if .ID }}
-                var req = new XMLHttpRequest();
-                var target = '/flashes/{{.ID}}/delete';
-                req.open('post', '/flashes/{{.ID}}/delete');
-                var formData = new FormData();
-                formData.append('csrf', '{{$.CSRF}}');
-                req.send(formData);
+                deleteFlash('{{.ID}}');
                 {{ end }}
               });
+              {{ if .ID }}
+              function deleteFlash(id) {
+                if (deleted) {
+                  return
+                }
+                const formData = new FormData();
+                formData.append('csrf', '{{$.CSRF}}');
+                const req = new XMLHttpRequest();
+                req.open('post', '/flashes/'+id+'/delete');
+                req.send(formData);
+                deleted = true;
+              };
+              {{ if not .Sticky }}
+              if (document.visibilityState) {
+                deleteFlash('{{.ID}}');
+              } else {
+                document.addEventListener("visibilitychange", () => {
+                  if (document.visibilityState) {
+                    deleteFlash('{{.ID}}');
+                  }
+                });
+              }
+              {{ end }}
+              {{ end }}
             })();
           </script>
         </div>
