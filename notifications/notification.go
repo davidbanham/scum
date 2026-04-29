@@ -104,16 +104,12 @@ func (this *Notification) FindByID(ctx context.Context, id string) error {
 func (this Notification) Delete(ctx context.Context) error {
 	db := ctx.Value("tx").(scummodel.Querier)
 
-	_, err := db.ExecContext(ctx, this.auditQuery(ctx, "D")+"DELETE FROM notifications WHERE id = $1 AND revision = $2", this.ID, this.Revision)
+	_, err := db.ExecContext(ctx, "DELETE FROM notifications WHERE id = $1 AND revision = $2", this.ID, this.Revision)
 	return err
 }
 
-func (this Notification) auditQuery(ctx context.Context, action string) string {
-	return ""
-}
-
 func (this *Notification) Save(ctx context.Context) error {
-	q, props, newRev := scummodel.StandardSave("notifications", this.colmap(), this.auditQuery(ctx, "U"))
+	q, props, newRev := scummodel.StandardSave("notifications", this.colmap(), "")
 
 	if err := scummodel.ExecSave(ctx, q, props); err != nil {
 		return err
