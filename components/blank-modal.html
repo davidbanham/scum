@@ -1,7 +1,7 @@
 {{ define "blank-modal" }}
 {{ $containerID := uniq }}
 {{ $buttonContainerID := uniq }}
-<div id="{{.ID}}" class="hidden relative z-40" aria-labelledby="modal-title" role="dialog" aria-modal="true" tabindex="-1">
+<div id="{{.ID}}" class="{{if not .Visible}}hidden{{end}} relative z-40" aria-labelledby="modal-title" role="dialog" aria-modal="true" tabindex="-1">
   <div aria-label="Close modal" data-modalcloser="{{.ID}}" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity">
   </div>
 
