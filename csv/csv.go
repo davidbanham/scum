@@ -28,9 +28,14 @@ func CSVCols(model any) []string {
 			} else if field.Type.String() == "sql.NullString" || field.Type.String() == "sql.NullTime" {
 				ret = append(ret, colName)
 			} else if field.Type.Kind() == reflect.Struct {
-				subs := CSVCols(inter)
-				for _, sub := range subs {
-					ret = append(ret, fmt.Sprintf("%s.%s", colName, sub))
+				switch inter.(type) {
+				default:
+					subs := CSVCols(inter)
+					for _, sub := range subs {
+						ret = append(ret, fmt.Sprintf("%s.%s", colName, sub))
+					}
+				case *CSVStringAble, CSVStringAble:
+					ret = append(ret, colName)
 				}
 			} else {
 				ret = append(ret, colName)
