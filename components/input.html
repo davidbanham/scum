@@ -46,12 +46,17 @@
         data-visited="false"
         value="{{$value}}"
         {{if .Autocomplete}}autocomplete="{{.Autocomplete}}"{{else}}autocomplete="off"{{end}}
-        class="text-md font-medium text-gray-900 {{if .Disabled}}bg-gray-100{{end}} block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 data-[visited=true]:invalid:border-red-600 data-[visited=true]:focus:invalid:border-gray-300 rounded-md">
+        class="text-md font-medium text-gray-900 disabled:bg-gray-100 block w-full shadow-sm py-2 px-3 placeholder:font-light placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 data-[visited=true]:invalid:border-red-600 data-[visited=true]:focus:invalid:border-gray-300 data-[visited=true]:focus:invalid:ring-gray-300 rounded-md">
     <script>
       (function() {
         const input = document.currentScript.parentElement.querySelector('input');
         input.addEventListener('focusout', function() {
           input.dataset.visited = true;
+        }, {once: true});
+        input.addEventListener('focus', function() {
+          if (input.value != '') {
+            input.dataset.visited = true;
+          }
         }, {once: true});
       })();
     </script>
