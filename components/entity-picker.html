@@ -10,6 +10,7 @@
         id="{{$uniqID}}"
         name="{{.Name}}"
         {{ if .Required}}required{{ end }}
+        {{ if .Form}}form="{{.Form}}"{{ end }}
         {{ if .Multiple }}multiple{{ end }}>
       <option value="">{{if .SelectText}}{{.SelectText}}{{else}}Select {{.Title}}{{end}}</option>
       {{ if (and $.Multiple $.SelectedIDs) }}
@@ -53,7 +54,7 @@
   </div>
 
   {{ if .IncludeSubmit }}
-  <button type="submit" class="max-h-12 grow-0 mt-0 ml-2 inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+  <button type="submit" {{if .Form}}form="{{.Form}}"{{end}} class="max-h-12 grow-0 mt-0 ml-2 inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
     {{ heroIcon "outline/check-circle" }}
   </button>
   {{ end }}
@@ -78,7 +79,11 @@
     }
 
     elem.addEventListener('change', debounce(function(ev) {
+      {{ if .Form }}
+      document.getElementById('{{.Form}}').requestSubmit();
+      {{ else }}
       elem.form.requestSubmit();
+      {{ end }}
     }, 1000));
     {{ end }}
 
