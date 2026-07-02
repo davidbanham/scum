@@ -142,7 +142,7 @@ func (results *SearchResults) FindAll(ctx context.Context, roles Roles, criteria
 		return nil
 	}
 
-	filtered = searchables.FilterByTableNames(criteria.Entities)
+	filtered = filtered.FilterByTableNames(criteria.Entities)
 	if len(filtered) == 0 {
 		return nil
 	}
