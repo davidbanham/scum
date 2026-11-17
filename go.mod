@@ -7,7 +7,7 @@ require (
 	github.com/davidbanham/human_duration v1.4.0
 	github.com/davidbanham/kewpie_go/v3 v3.5.1
 	github.com/davidbanham/marcel v0.0.15
-	github.com/gomarkdown/markdown v0.0.0-20260411013819-759bbc3e3207
+	github.com/gomarkdown/markdown v0.0.0-20260724235538-61af6e1e6971
 	github.com/iancoleman/strcase v0.3.0
 	github.com/kylelemons/godebug v1.1.0
 	github.com/lib/pq v1.10.9
